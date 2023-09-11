@@ -5,8 +5,6 @@ import { createServerComponentClient } from "@supabase/auth-helpers-nextjs"
 import { Database } from "@/types/supabase"
 import { EventCard } from "@/components/event-card"
 
-export const dynamic = "force-dynamic"
-
 export default async function Index() {
     const supabase = await createServerComponentClient<Database>({ cookies })
 
