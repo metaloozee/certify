@@ -20,7 +20,9 @@ export default function RootLayout({
                 <ThemeProvider attribute="class" defaultTheme="dark">
                     <div className="relative flex min-h-screen flex-col">
                         <Navbar />
-                        <div className="flex-1">{children}</div>
+                        <div className="flex m-10 items-center justify-center">
+                            {children}
+                        </div>
                         {/* <Footer /> */}
                     </div>
                 </ThemeProvider>

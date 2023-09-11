@@ -24,10 +24,6 @@ import {
 export const UserAccount = ({ session }: { session: Session | null }) => {
     const router = useRouter()
     const supabase = createClientComponentClient<Database>()
-    const [loading, setLoading] = useState(true)
-    const [firstName, setFirstName] = useState<string | null>(null)
-    const [lastName, setLastName] = useState<string | null>(null)
-    const [avatar_url, setAvatarUrl] = useState<string | null>(null)
 
     const handleLogin = async () => {
         await supabase.auth.signInWithOAuth({ provider: "google" })
