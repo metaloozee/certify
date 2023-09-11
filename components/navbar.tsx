@@ -1,14 +1,30 @@
-import { cookies } from "next/headers"
+"use client"
+
+import { useEffect, useState } from "react"
 import Link from "next/link"
-import { createServerComponentClient } from "@supabase/auth-helpers-nextjs"
+import {
+    createClientComponentClient,
+    createServerComponentClient,
+    Session,
+} from "@supabase/auth-helpers-nextjs"
 
 import { UserAccount } from "./user-btn"
 
-export const Navbar = async () => {
-    const supabase = createServerComponentClient({ cookies })
-    const {
-        data: { session },
-    } = await supabase.auth.getSession()
+export const Navbar = () => {
+    const supabase = createClientComponentClient()
+
+    const [session, setSession] = useState<Session | null>(null)
+
+    useEffect(() => {
+        const fetchSession = async () => {
+            const {
+                data: { session },
+            } = await supabase.auth.getSession()
+            setSession(session)
+        }
+
+        fetchSession()
+    }, [setSession])
 
     return (
         <header className="top-0 z-40 w-full border-b bg-background">
