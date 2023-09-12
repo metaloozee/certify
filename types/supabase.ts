@@ -115,7 +115,6 @@ export interface Database {
             }
             student: {
                 Row: {
-                    avatar_url: string | null
                     class: string | null
                     enrollment: string | null
                     first_name: string | null
@@ -123,7 +122,6 @@ export interface Database {
                     last_name: string | null
                 }
                 Insert: {
-                    avatar_url?: string | null
                     class?: string | null
                     enrollment?: string | null
                     first_name?: string | null
@@ -131,7 +129,6 @@ export interface Database {
                     last_name?: string | null
                 }
                 Update: {
-                    avatar_url?: string | null
                     class?: string | null
                     enrollment?: string | null
                     first_name?: string | null
