@@ -7,6 +7,7 @@ import {
     createClientComponentClient,
     Session,
 } from "@supabase/auth-helpers-nextjs"
+import { UserCircleIcon } from "lucide-react"
 
 import { Database } from "@/types/supabase"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
@@ -44,9 +45,11 @@ export const UserAccount = ({ session }: { session: Session | null }) => {
                 >
                     <Avatar>
                         <AvatarImage
-                            src={session.user.user_metadata.avatar_url ?? ""}
+                            src={session.user.user_metadata.avatar_url}
                         />
-                        <AvatarFallback></AvatarFallback>
+                        <AvatarFallback>
+                            <UserCircleIcon />
+                        </AvatarFallback>
                     </Avatar>
                 </Button>
             </DropdownMenuTrigger>

@@ -12,14 +12,14 @@ export default async function Index() {
 
     return data && data.length > 0 ? (
         <div className="flex flex-col justify-center items-center gap-10">
-            <h1 className="text-3xl font-bold">Upcoming Events</h1>
+            <h1 className="text-3xl font-bold">Upcoming Competetions</h1>
             <div className="flex flex-wrap justify-between items-center gap-5">
                 {data.map((d) => (
-                    <EventCard data={d} />
+                    <EventCard key={d.id} data={d} />
                 ))}
             </div>
         </div>
     ) : (
-        <h1>No Upcoming Events</h1>
+        <h1>No Upcoming Competetions</h1>
     )
 }
