@@ -1,17 +1,57 @@
-import { createMiddlewareClient } from "@supabase/auth-helpers-nextjs";
-import { NextResponse } from "next/server";
-
-import type { NextRequest } from "next/server";
+import { NextRequest, NextResponse } from "next/server"
+import { createMiddlewareClient } from "@supabase/auth-helpers-nextjs"
 
 export async function middleware(req: NextRequest) {
-  const res = NextResponse.next();
+    const res = NextResponse.next()
 
-  // Create a Supabase client configured to use cookies
-  const supabase = createMiddlewareClient({ req, res });
+    // Create a Supabase client configured to use cookies
+    const supabase = createMiddlewareClient({ req, res })
 
-  // Refresh session if expired - required for Server Components
-  // https://supabase.com/docs/guides/auth/auth-helpers/nextjs#managing-session-with-middleware
-  await supabase.auth.getSession();
+    async function checkIfIdExistsInTable(
+        tableName: string,
+        idToCheck: string
+    ): Promise<boolean> {
+        const { data, error } = await supabase
+            .from(tableName)
+            .select("*")
+            .eq("id", idToCheck)
 
-  return res;
+        if (error) {
+            throw error
+        }
+
+        // Check if any rows were returned
+        return data.length > 0
+    }
+
+    // Refresh session if expired - required for Server Components
+    // https://supabase.com/docs/guides/auth/auth-helpers/nextjs#managing-session-with-middleware
+    const session = await supabase.auth.getSession()
+    if (session.data.session !== null) {
+        const user = session.data.session.user
+
+        checkIfIdExistsInTable("student", user.id)
+            .then((exists) => {
+                if (exists) {
+                    console.log(`already registered`)
+                } else {
+                    const { pathname } = req.nextUrl
+
+                    if (pathname.startsWith("/_next"))
+                        return NextResponse.next()
+
+                    req.nextUrl.pathname = "/welcome"
+                    return NextResponse.redirect(req.nextUrl)
+                }
+            })
+            .catch((error) => {
+                console.error("Error checking ID:", error)
+            })
+    }
+
+    return NextResponse.next()
+}
+
+export const config = {
+    matcher: "/welcome",
 }
