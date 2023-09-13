@@ -1,12 +1,12 @@
-import { cookies } from "next/headers"
 import Link from "next/link"
-import { createServerComponentClient } from "@supabase/auth-helpers-nextjs"
 
-import { Database } from "@/types/supabase"
+import type { Database } from "@/types/supabase"
 import { EventCard } from "@/components/event-card"
 
+import { createServerSupabaseClient } from "./supabase-server"
+
 export default async function Index() {
-    const supabase = await createServerComponentClient<Database>({ cookies })
+    const supabase = await createServerSupabaseClient()
 
     const { data } = await supabase.from("event").select("*").eq("isopen", true)
 

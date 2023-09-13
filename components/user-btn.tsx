@@ -1,15 +1,11 @@
 "use client"
 
-import React, { useState } from "react"
+import React from "react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
-import {
-    createClientComponentClient,
-    Session,
-} from "@supabase/auth-helpers-nextjs"
+import type { User } from "@supabase/auth-helpers-nextjs"
 import { UserCircleIcon } from "lucide-react"
 
-import { Database } from "@/types/supabase"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import {
@@ -21,10 +17,11 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import { useSupabase } from "@/app/supabase-provider"
 
-export const UserAccount = ({ session }: { session: Session | null }) => {
+export const UserAccount = ({ user }: { user: User | null }) => {
     const router = useRouter()
-    const supabase = createClientComponentClient<Database>()
+    const { supabase } = useSupabase()
 
     const handleLogin = async () => {
         await supabase.auth.signInWithOAuth({ provider: "google" })
@@ -36,7 +33,7 @@ export const UserAccount = ({ session }: { session: Session | null }) => {
         router.refresh()
     }
 
-    return session ? (
+    return user ? (
         <DropdownMenu>
             <DropdownMenuTrigger asChild>
                 <Button
@@ -44,9 +41,7 @@ export const UserAccount = ({ session }: { session: Session | null }) => {
                     className="relative h-8 w-8 rounded-full"
                 >
                     <Avatar>
-                        <AvatarImage
-                            src={session.user.user_metadata.avatar_url}
-                        />
+                        <AvatarImage src={user.user_metadata.avatar_url} />
                         <AvatarFallback>
                             <UserCircleIcon />
                         </AvatarFallback>
@@ -57,10 +52,10 @@ export const UserAccount = ({ session }: { session: Session | null }) => {
                 <DropdownMenuLabel className="font-normal">
                     <div className="flex flex-col space-y-1">
                         <p className="text-sm font-medium leading-none">
-                            {session.user.user_metadata.full_name}
+                            {user.user_metadata.full_name}
                         </p>
                         <p className="text-xs leading-none text-muted-foreground">
-                            {session.user.email}
+                            {user.email}
                         </p>
                     </div>
                 </DropdownMenuLabel>
