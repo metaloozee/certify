@@ -1,5 +1,6 @@
 import "./globals.css"
 
+import { Toaster } from "@/components/ui/toaster"
 import { Footer } from "@/components/footer"
 import { Navbar } from "@/components/navbar"
 import { ThemeProvider } from "@/components/theme-provider"
@@ -27,6 +28,7 @@ export default function RootLayout({
                             <div className="flex m-10 items-center justify-center">
                                 {children}
                             </div>
+                            <Toaster />
                             {/* <Footer /> */}
                         </div>
                     </ThemeProvider>

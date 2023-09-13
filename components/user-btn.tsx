@@ -3,8 +3,8 @@
 import React from "react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
+import { PersonIcon } from "@radix-ui/react-icons"
 import type { User } from "@supabase/auth-helpers-nextjs"
-import { UserCircleIcon } from "lucide-react"
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
@@ -43,7 +43,7 @@ export const UserAccount = ({ user }: { user: User | null }) => {
                     <Avatar>
                         <AvatarImage src={user.user_metadata.avatar_url} />
                         <AvatarFallback>
-                            <UserCircleIcon />
+                            <PersonIcon />
                         </AvatarFallback>
                     </Avatar>
                 </Button>
