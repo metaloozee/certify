@@ -1,34 +1,20 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { ReloadIcon } from "@radix-ui/react-icons"
-import {
-    createClientComponentClient,
-    Session,
-} from "@supabase/auth-helpers-nextjs"
-import { useForm } from "react-hook-form"
+import { ReloadIcon, RocketIcon } from "@radix-ui/react-icons"
+import type { Session } from "@supabase/auth-helpers-nextjs"
 import {
     adjectives,
     animals,
     colors,
     uniqueNamesGenerator,
 } from "unique-names-generator"
-import * as z from "zod"
 
-import { Database } from "@/types/supabase"
-import {
-    Form,
-    FormControl,
-    FormDescription,
-    FormField,
-    FormItem,
-    FormLabel,
-    FormMessage,
-} from "@/components/ui/form"
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
+import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-
-import { Button } from "./ui/button"
+import { Label } from "@/components/ui/label"
+import { useSupabase } from "@/app/supabase-provider"
 
 export type User = {
     enrollment: string | null
@@ -43,16 +29,6 @@ export type Event = {
     team_limit: number
 }
 
-const formSchema = z.object({
-    team_name: z.string(),
-    team_member_1_enrollment: z.string(),
-    team_member_2_enrollment: z.string(),
-    team_member_3_enrollment: z.string(),
-    team_member_4_enrollment: z.string(),
-    team_member_5_enrollment: z.string(),
-    team_member_6_enrollment: z.string(),
-})
-
 export const EventForm = ({
     session,
     event,
@@ -62,76 +38,285 @@ export const EventForm = ({
     event: Event
     user: User
 }) => {
-    const [random_team_name, setRandom_team_name] = useState<string>()
+    const { supabase } = useSupabase()
+
+    const [isLeaderRegistered, setIsLeaderRegistered] = useState(false)
+
     const [loading, setLoading] = useState(false)
+    const [error, setError] = useState<string | null>(null)
+    const [success, setSuccess] = useState(false)
 
     useEffect(() => {
-        const name: string = uniqueNamesGenerator({
+        const checkIfLeaderHasRegistered = async () => {
+            const { data: groupMemberData, error: groupMemberDataError } =
+                await supabase
+                    .from("groupmember")
+                    .select("*")
+                    .eq("student_id", session?.user.id ?? "")
+                    .maybeSingle()
+            if (groupMemberDataError || !groupMemberData) {
+                return setIsLeaderRegistered(false)
+            }
+
+            const { data, error } = await supabase
+                .from("eventparticipant")
+                .select("*")
+                .eq("group_id", groupMemberData?.group_id ?? "")
+                .eq("event_id", event.id)
+                .maybeSingle()
+            if (error || !data) {
+                return setIsLeaderRegistered(false)
+            }
+
+            setIsLeaderRegistered(true)
+        }
+
+        checkIfLeaderHasRegistered()
+    }, [])
+
+    const [teamName] = useState<string>(() =>
+        uniqueNamesGenerator({
             dictionaries: [adjectives, animals, colors],
             length: 2,
         })
+    )
 
-        setRandom_team_name(name)
-    }, [])
+    const [leaderEnrollmentNumber] = useState(() => user.enrollment ?? "")
 
-    const supabase = createClientComponentClient<Database>()
+    const initialMemberEnrollmentNumbers = Array.from(
+        { length: event.team_limit - 1 },
+        () => ""
+    )
+    const [memberEnrollmentNumbers, setMemberEnrollmentNumbers] = useState<
+        string[]
+    >(initialMemberEnrollmentNumbers as string[])
 
-    const form = useForm<z.infer<typeof formSchema>>({
-        resolver: zodResolver(formSchema),
-        defaultValues: {
-            team_name: random_team_name,
-            team_member_1_enrollment: user.enrollment ?? "",
-        },
-    })
-
-    const handleForm = async (values: z.infer<typeof formSchema>) => {
-        setLoading(true)
-        console.log(values.team_name)
-        alert("yo")
+    const handleMemberEnrollmentNumberChange = (
+        index: number,
+        value: string | null
+    ) => {
+        const updatedMembers = [...memberEnrollmentNumbers]
+        updatedMembers[index] = value as string
+        setMemberEnrollmentNumbers(updatedMembers)
     }
 
-    const teamMemberFields: string[] = []
-    for (let i = 0; i < event.team_limit; i++) {
-        teamMemberFields.push(`team_member_${i + 1}_enrollment`)
+    if (isLeaderRegistered) {
+        return (
+            <div className="flex flex-col gap-2 justify-center items-center">
+                <h1 className="text-3xl font-bold">User Already Registered</h1>
+                <p>
+                    You have already registered yourself in this event, kindly
+                    contact the admins if you want to remove yourself.
+                </p>
+            </div>
+        )
+    }
+
+    const checkTeammateRegisteration = async (enrollmentNumbers: string[]) => {
+        console.log("Checking teammate registration...")
+        if (enrollmentNumbers[0].length === 0) {
+            return false
+        }
+
+        for (const enrollmentNumber of enrollmentNumbers) {
+            console.log(`Checking enrollment number: ${enrollmentNumber}`)
+
+            const { data: studentData, error: studentDataError } =
+                await supabase
+                    .from("student")
+                    .select("id")
+                    .eq("enrollment", enrollmentNumber)
+                    .maybeSingle()
+
+            if (studentDataError) {
+                console.error("Error fetching student data:", studentDataError)
+                throw new Error(studentDataError.message)
+            }
+
+            if (!studentData) {
+                console.warn("Student not found:", enrollmentNumber)
+                throw new Error("Student not found.")
+            }
+
+            console.log("Student found:", studentData)
+
+            console.log(`Checking the studen's group data`)
+            const { data: groupData, error: groupDataError } = await supabase
+                .from("groupmember")
+                .select("*")
+                .eq("student_id", studentData.id)
+                .maybeSingle()
+
+            if (groupDataError) {
+                console.error("Error fetching group's data")
+                throw new Error(groupDataError.message)
+            }
+
+            if (!groupData) {
+                return false
+            }
+
+            console.log(
+                "Fetching if the user is registered in the same event or not"
+            )
+            const { data: eventRegistered, error: eventRegisteredError } =
+                await supabase
+                    .from("eventparticipant")
+                    .select("*")
+                    .eq("event_id", event.id)
+                    .eq("group_id", groupData.group_id ?? "")
+                    .maybeSingle()
+
+            if (eventRegisteredError) {
+                console.error("Error occurred in event register")
+                throw new Error(eventRegisteredError.message)
+            }
+
+            if (!eventRegistered) {
+                return false
+            }
+
+            return true
+        }
+    }
+
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault()
+
+        try {
+            setError(null)
+            setLoading(true)
+
+            const isRegistered = await checkTeammateRegisteration(
+                memberEnrollmentNumbers
+            )
+
+            if (isRegistered) {
+                throw new Error(
+                    "One of your team members has already participated in this event."
+                )
+            }
+
+            // Creating the Group
+            const { data: groupData, error: groupDataError } = await supabase
+                .from("group")
+                .insert({ name: teamName })
+                .select("id")
+                .single()
+
+            if (groupDataError) {
+                throw new Error(groupDataError.message)
+            }
+
+            // Adding members to the Group
+            if (memberEnrollmentNumbers[0].length > 0) {
+                for (const enrollmentNumber of memberEnrollmentNumbers) {
+                    const { data: studentData, error: studentDataError } =
+                        await supabase
+                            .from("student")
+                            .select("id")
+                            .eq("enrollment", enrollmentNumber)
+                            .limit(1)
+
+                    if (studentDataError) {
+                        throw new Error(studentDataError.message)
+                    }
+
+                    const { error: memberGroupError } = await supabase
+                        .from("groupmember")
+                        .insert({
+                            group_id: groupData.id,
+                            student_id: studentData[0].id,
+                        })
+
+                    if (memberGroupError) {
+                        throw new Error(memberGroupError.message)
+                    }
+                }
+            }
+
+            // Adding the leader
+            const { error: memberGroupError } = await supabase
+                .from("groupmember")
+                .insert({
+                    group_id: groupData.id,
+                    student_id: session?.user.id,
+                })
+
+            if (memberGroupError) {
+                throw new Error(memberGroupError.message)
+            }
+
+            // Creating event participation
+            const { error: eventParticipantError } = await supabase
+                .from("eventparticipant")
+                .insert({ event_id: event.id, group_id: groupData.id })
+
+            if (eventParticipantError) {
+                throw new Error(eventParticipantError.message)
+            }
+
+            setSuccess(true)
+        } catch (e: any) {
+            console.error(e)
+            setError(e.message)
+            setSuccess(false)
+        } finally {
+            setLoading(false)
+        }
     }
 
     return (
         <div className="mt-10 container max-w-lg">
-            <Form {...form}>
-                <form
-                    onSubmit={form.handleSubmit(handleForm)}
-                    className="w-full space-y-8"
-                >
-                    {teamMemberFields.map((fieldName, index) => (
-                        <FormField
-                            key={fieldName}
-                            control={form.control}
-                            name={fieldName as keyof z.infer<typeof formSchema>}
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>{`Team Member ${
-                                        index + 1
-                                    }'s Enrollment Number`}</FormLabel>
-                                    <FormControl>
-                                        <Input {...field} />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
+            <form onSubmit={handleSubmit} className="space-y-8">
+                <div className="space-y-2">
+                    <Label>{`Team Leader's Enrollment Number`}</Label>
+                    <Input disabled value={leaderEnrollmentNumber} />
+                </div>
+                {memberEnrollmentNumbers.map((memberNumber, index) => (
+                    <div key={index} className="space-y-2">
+                        <Label>{`Team Member ${
+                            index + 1
+                        }'s Enrollment Number`}</Label>
+                        <Input
+                            disabled={loading}
+                            value={memberNumber ?? ""}
+                            onChange={(e) =>
+                                handleMemberEnrollmentNumberChange(
+                                    index,
+                                    e.target.value
+                                )
+                            }
                         />
-                    ))}
-                    {!loading ? (
-                        <Button className="w-full" type="submit">
-                            Register for {event.name}
-                        </Button>
-                    ) : (
-                        <Button className="min-w-fit" disabled type="submit">
-                            <ReloadIcon className="mr-2 h-4 w-4 animate-spin" />
-                            Please wait
-                        </Button>
-                    )}
-                </form>
-            </Form>
+                    </div>
+                ))}
+
+                <Button
+                    disabled={loading === !success}
+                    className="w-full"
+                    type="submit"
+                >
+                    Register for {event.name}
+                </Button>
+            </form>
+
+            {error ? (
+                <p className="mt-8 text-xs text-red-500">{error}</p>
+            ) : (
+                <></>
+            )}
+
+            {success ? (
+                <Alert className="mt-8">
+                    <RocketIcon className="h-4 w-4" />
+                    <AlertTitle>Success</AlertTitle>
+                    <AlertDescription>
+                        You have successfully registered for the event!
+                    </AlertDescription>
+                </Alert>
+            ) : (
+                <></>
+            )}
         </div>
     )
 }

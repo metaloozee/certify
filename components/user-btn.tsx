@@ -3,9 +3,10 @@
 import React from "react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
+import { PersonIcon } from "@radix-ui/react-icons"
 import type { User } from "@supabase/auth-helpers-nextjs"
-import { UserCircleIcon } from "lucide-react"
 
+import { getURL } from "@/lib/helpers"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import {
@@ -24,7 +25,10 @@ export const UserAccount = ({ user }: { user: User | null }) => {
     const { supabase } = useSupabase()
 
     const handleLogin = async () => {
-        await supabase.auth.signInWithOAuth({ provider: "google" })
+        await supabase.auth.signInWithOAuth({
+            provider: "google",
+            options: { redirectTo: `${getURL()}` },
+        })
         router.refresh()
     }
 
@@ -43,7 +47,7 @@ export const UserAccount = ({ user }: { user: User | null }) => {
                     <Avatar>
                         <AvatarImage src={user.user_metadata.avatar_url} />
                         <AvatarFallback>
-                            <UserCircleIcon />
+                            <PersonIcon />
                         </AvatarFallback>
                     </Avatar>
                 </Button>
