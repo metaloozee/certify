@@ -24,7 +24,10 @@ export const UserAccount = ({ user }: { user: User | null }) => {
     const { supabase } = useSupabase()
 
     const handleLogin = async () => {
-        await supabase.auth.signInWithOAuth({ provider: "google" })
+        await supabase.auth.signInWithOAuth({
+            provider: "google",
+            options: { redirectTo: `${location.origin}/auth/callback` },
+        })
         router.refresh()
     }
 
