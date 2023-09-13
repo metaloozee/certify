@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation"
 import { PersonIcon } from "@radix-ui/react-icons"
 import type { User } from "@supabase/auth-helpers-nextjs"
 
+import { getURL } from "@/lib/helpers"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import {
@@ -26,7 +27,7 @@ export const UserAccount = ({ user }: { user: User | null }) => {
     const handleLogin = async () => {
         await supabase.auth.signInWithOAuth({
             provider: "google",
-            options: { redirectTo: `${location.origin}/auth/callback` },
+            options: { redirectTo: `${getURL()}/auth/callback` },
         })
         router.refresh()
     }
