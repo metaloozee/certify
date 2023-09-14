@@ -121,7 +121,11 @@ export const EventForm = ({
     }
 
     const checkTeammateRegisteration = async (enrollmentNumbers: string[]) => {
-        if (enrollmentNumbers[0].length === 0) {
+        if (
+            (enrollmentNumbers.length > 0 &&
+                enrollmentNumbers[0].length === 0) ||
+            enrollmentNumbers.length == 0
+        ) {
             return false
         }
 
@@ -204,7 +208,10 @@ export const EventForm = ({
             }
 
             // Adding members to the Group
-            if (memberEnrollmentNumbers[0].length > 0) {
+            if (
+                memberEnrollmentNumbers.length > 0 &&
+                memberEnrollmentNumbers[0].length > 0
+            ) {
                 for (const enrollmentNumber of memberEnrollmentNumbers) {
                     const { data: studentData, error: studentDataError } =
                         await supabase

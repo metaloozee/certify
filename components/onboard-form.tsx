@@ -34,7 +34,6 @@ export const OnboardingForm = ({ session }: { session: Session | null }) => {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
-        console.log("clicked submit")
 
         try {
             setError(null)

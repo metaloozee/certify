@@ -35,7 +35,10 @@ export interface Database {
                     id: string
                     isopen: boolean | null
                     name: string | null
+                    runner_up: string | null
+                    second_runner_up: string | null
                     team_limit: number
+                    winner: string | null
                 }
                 Insert: {
                     date?: string | null
@@ -43,7 +46,10 @@ export interface Database {
                     id?: string
                     isopen?: boolean | null
                     name?: string | null
+                    runner_up?: string | null
+                    second_runner_up?: string | null
                     team_limit?: number
+                    winner?: string | null
                 }
                 Update: {
                     date?: string | null
@@ -51,9 +57,31 @@ export interface Database {
                     id?: string
                     isopen?: boolean | null
                     name?: string | null
+                    runner_up?: string | null
+                    second_runner_up?: string | null
                     team_limit?: number
+                    winner?: string | null
                 }
-                Relationships: []
+                Relationships: [
+                    {
+                        foreignKeyName: "event_runner_up_fkey"
+                        columns: ["runner_up"]
+                        referencedRelation: "group"
+                        referencedColumns: ["id"]
+                    },
+                    {
+                        foreignKeyName: "event_second_runner_up_fkey"
+                        columns: ["second_runner_up"]
+                        referencedRelation: "group"
+                        referencedColumns: ["id"]
+                    },
+                    {
+                        foreignKeyName: "event_winner_fkey"
+                        columns: ["winner"]
+                        referencedRelation: "group"
+                        referencedColumns: ["id"]
+                    },
+                ]
             }
             eventparticipant: {
                 Row: {
