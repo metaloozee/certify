@@ -2,159 +2,167 @@
 
 import { useState } from "react"
 import { useRouter } from "next/navigation"
-import {
-    createClientComponentClient,
-    Session,
-} from "@supabase/auth-helpers-nextjs"
-import { Terminal } from "lucide-react"
+import { RocketIcon } from "@radix-ui/react-icons"
+import type { Session } from "@supabase/auth-helpers-nextjs"
 
-import { Database } from "@/types/supabase"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { useSupabase } from "@/app/supabase-provider"
 
-import { Button } from "./ui/button"
 import {
     DropdownMenu,
     DropdownMenuContent,
-    DropdownMenuLabel,
     DropdownMenuRadioGroup,
     DropdownMenuRadioItem,
-    DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from "./ui/dropdown-menu"
-import { Input } from "./ui/input"
-import { Label } from "./ui/label"
 
-const OnboardingForm = () => {
-    const [fname, setFname] = useState("")
-    const [lname, setLname] = useState("")
-    const [branch, setBranch] = useState("IF")
-    const [year, setYear] = useState("SY")
-    const [enroll, setEnroll] = useState("")
-    const [isValid, setIsValid] = useState(true)
-    const router = useRouter()
-    const supabase = createClientComponentClient<Database>()
+export const OnboardingForm = ({ session }: { session: Session | null }) => {
+    const { supabase } = useSupabase()
 
-    const handleClick = () => {
-        if (fname !== "" && lname !== "" && enroll !== "") {
-            console.log("in")
+    const [loading, setLoading] = useState(false)
+    const [error, setError] = useState<string | null>(null)
+    const [success, setSuccess] = useState(false)
 
-            supabase.auth.getSession().then((data) => {
-                const user = data.data.session?.user
-                if (user !== undefined) {
-                    console.log("final")
+    const [fname, setFname] = useState<string | null>(null)
+    const [lname, setLname] = useState<string | null>(null)
+    const [branch, setBranch] = useState<string>("IF")
+    const [year, setYear] = useState("TY")
+    const [enroll, setEnroll] = useState<string | null>(null)
 
-                    supabase
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault()
+        console.log("clicked submit")
+
+        try {
+            setError(null)
+            setLoading(true)
+
+            if (
+                (fname && fname.length > 0) ||
+                (lname && lname.length > 0) ||
+                (enroll && enroll.length > 0)
+            ) {
+                // Checking if existing user with the same enrollment number exists or not
+                const { data: existingUser, error: existingUserError } =
+                    await supabase
                         .from("student")
-                        .insert({
-                            id: user?.id,
-                            first_name: fname,
-                            last_name: lname,
-                            enrollment: enroll,
-                            class: year.concat(branch),
-                        })
-                        .then(() => {
-                            console.log("updated")
-                            router.push("/")
-                        })
+                        .select("*")
+                        .eq("enrollment", enroll ?? "")
+                        .maybeSingle()
+                if (existingUserError) {
+                    throw new Error(existingUserError.message)
                 }
-            })
-        } else {
-            setIsValid(false)
+                if (existingUser) {
+                    throw new Error(
+                        "User already exists with the same Enrollment number"
+                    )
+                }
+
+                // Adding the user
+                const { error } = await supabase
+                    .from("student")
+                    .update({
+                        first_name: fname,
+                        last_name: lname,
+                        enrollment: enroll,
+                        class: year.concat(branch),
+                    })
+                    .eq("id", session?.user.id ?? "")
+                if (error) {
+                    throw new Error(error.message)
+                }
+
+                setSuccess(true)
+            } else {
+                throw new Error("Please enter valid inputs")
+            }
+        } catch (e: any) {
+            console.error(e)
+            setError(e.message)
+            setSuccess(false)
+        } finally {
+            setLoading(false)
         }
     }
 
     return (
-        <div className="form flex h-[75vh] items-center">
-            <div>
-                {!isValid && (
-                    <Alert>
-                        <Terminal className="h-4 w-4" />
-                        <AlertTitle>Heads up!</AlertTitle>
-                        <AlertDescription>
-                            Details entered are not quite what we had
-                            expected...
-                        </AlertDescription>
-                    </Alert>
-                )}
-                <div className="flex">
-                    <div className="mx-5">
+        <div className="mt-10 container max-w-lg">
+            <form onSubmit={handleSubmit} className="space-y-8">
+                <div className="flex gap-5">
+                    <div className="space-y-2 w-full">
                         <Label htmlFor="fname">First Name</Label>
                         <Input
+                            disabled={loading}
                             type="text"
                             id="fname"
-                            value={fname}
+                            value={fname ?? ""}
                             onChange={(e) => setFname(e.target.value)}
-                        ></Input>
+                        />
                     </div>
-                    <div>
+                    <div className="space-y-2 w-full">
                         <Label htmlFor="lname">Last Name</Label>
                         <Input
+                            disabled={loading}
                             type="text"
-                            value={lname}
+                            value={lname ?? ""}
                             onChange={(e) => setLname(e.target.value)}
                             id="lname"
                         ></Input>
                     </div>
                 </div>
 
-                <div className="mx-5 ">
+                <div className="space-y-2">
                     <Label htmlFor="enroll">Enrollment No.</Label>
                     <Input
+                        disabled={loading}
                         type="number"
                         id="enroll"
                         onChange={(e) => setEnroll(e.target.value)}
-                        value={enroll}
-                    ></Input>
-                    <div className="flex">
-                        <div className="m-3">
-                            <Label className="mr-5" htmlFor="branch">
-                                Branch
-                            </Label>
+                        value={enroll ?? ""}
+                    />
+                </div>
+                <div className="flex gap-5">
+                    <div className="space-x-2">
+                        <Label htmlFor="branch">Branch</Label>
+                        <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                                <Button variant="outline">Open</Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent className="w-56">
+                                <DropdownMenuRadioGroup
+                                    value={branch}
+                                    onValueChange={setBranch}
+                                >
+                                    <DropdownMenuRadioItem value="IF">
+                                        IF
+                                    </DropdownMenuRadioItem>
+                                    <DropdownMenuRadioItem value="EJ">
+                                        EJ
+                                    </DropdownMenuRadioItem>
+                                    <DropdownMenuRadioItem value="ME">
+                                        ME
+                                    </DropdownMenuRadioItem>
+                                    <DropdownMenuRadioItem value="CO">
+                                        CO
+                                    </DropdownMenuRadioItem>
+                                    <DropdownMenuRadioItem value="CE">
+                                        CE
+                                    </DropdownMenuRadioItem>
+                                </DropdownMenuRadioGroup>
+                            </DropdownMenuContent>
+                        </DropdownMenu>
+                    </div>
+                    <div className="flex gap-5">
+                        <div className="space-x-2">
+                            <Label htmlFor="year">Year</Label>
                             <DropdownMenu>
                                 <DropdownMenuTrigger asChild>
                                     <Button variant="outline">Open</Button>
                                 </DropdownMenuTrigger>
                                 <DropdownMenuContent className="w-56">
-                                    <DropdownMenuLabel>
-                                        Panel Position
-                                    </DropdownMenuLabel>
-                                    <DropdownMenuSeparator />
-                                    <DropdownMenuRadioGroup
-                                        value={branch}
-                                        onValueChange={setBranch}
-                                    >
-                                        <DropdownMenuRadioItem value="IF">
-                                            IF
-                                        </DropdownMenuRadioItem>
-                                        <DropdownMenuRadioItem value="EJ">
-                                            EJ
-                                        </DropdownMenuRadioItem>
-                                        <DropdownMenuRadioItem value="ME">
-                                            ME
-                                        </DropdownMenuRadioItem>
-                                        <DropdownMenuRadioItem value="CO">
-                                            CO
-                                        </DropdownMenuRadioItem>
-                                        <DropdownMenuRadioItem value="CE">
-                                            CE
-                                        </DropdownMenuRadioItem>
-                                    </DropdownMenuRadioGroup>
-                                </DropdownMenuContent>
-                            </DropdownMenu>
-                        </div>
-                        <div className="m-3 ml-5">
-                            <Label className="mr-4" htmlFor="year">
-                                Year
-                            </Label>
-                            <DropdownMenu>
-                                <DropdownMenuTrigger asChild>
-                                    <Button variant="outline">Open</Button>
-                                </DropdownMenuTrigger>
-                                <DropdownMenuContent className="w-56">
-                                    <DropdownMenuLabel>
-                                        Panel Position
-                                    </DropdownMenuLabel>
-                                    <DropdownMenuSeparator />
                                     <DropdownMenuRadioGroup
                                         value={year}
                                         onValueChange={setYear}
@@ -175,12 +183,32 @@ const OnboardingForm = () => {
                     </div>
                 </div>
 
-                <Button onClick={handleClick} className="m-5">
-                    Register
+                <Button
+                    disabled={loading === !success}
+                    className="w-full"
+                    type="submit"
+                >
+                    Submit
                 </Button>
-            </div>
+            </form>
+
+            {error ? (
+                <p className="mt-8 text-xs text-red-500">{error}</p>
+            ) : (
+                <></>
+            )}
+
+            {success ? (
+                <Alert className="mt-8">
+                    <RocketIcon className="h-4 w-4" />
+                    <AlertTitle>Success</AlertTitle>
+                    <AlertDescription>
+                        You have successfully registered yourself!
+                    </AlertDescription>
+                </Alert>
+            ) : (
+                <></>
+            )}
         </div>
     )
 }
-
-export default OnboardingForm

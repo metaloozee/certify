@@ -113,14 +113,11 @@ export const EventForm = ({
     }
 
     const checkTeammateRegisteration = async (enrollmentNumbers: string[]) => {
-        console.log("Checking teammate registration...")
         if (enrollmentNumbers[0].length === 0) {
             return false
         }
 
         for (const enrollmentNumber of enrollmentNumbers) {
-            console.log(`Checking enrollment number: ${enrollmentNumber}`)
-
             const { data: studentData, error: studentDataError } =
                 await supabase
                     .from("student")
@@ -129,18 +126,13 @@ export const EventForm = ({
                     .maybeSingle()
 
             if (studentDataError) {
-                console.error("Error fetching student data:", studentDataError)
                 throw new Error(studentDataError.message)
             }
 
             if (!studentData) {
-                console.warn("Student not found:", enrollmentNumber)
                 throw new Error("Student not found.")
             }
 
-            console.log("Student found:", studentData)
-
-            console.log(`Checking the studen's group data`)
             const { data: groupData, error: groupDataError } = await supabase
                 .from("groupmember")
                 .select("*")
@@ -148,7 +140,6 @@ export const EventForm = ({
                 .maybeSingle()
 
             if (groupDataError) {
-                console.error("Error fetching group's data")
                 throw new Error(groupDataError.message)
             }
 
@@ -156,9 +147,6 @@ export const EventForm = ({
                 return false
             }
 
-            console.log(
-                "Fetching if the user is registered in the same event or not"
-            )
             const { data: eventRegistered, error: eventRegisteredError } =
                 await supabase
                     .from("eventparticipant")
@@ -168,7 +156,6 @@ export const EventForm = ({
                     .maybeSingle()
 
             if (eventRegisteredError) {
-                console.error("Error occurred in event register")
                 throw new Error(eventRegisteredError.message)
             }
 
