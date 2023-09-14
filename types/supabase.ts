@@ -9,6 +9,25 @@ export type Json =
 export interface Database {
     public: {
         Tables: {
+            admin: {
+                Row: {
+                    id: string
+                }
+                Insert: {
+                    id: string
+                }
+                Update: {
+                    id?: string
+                }
+                Relationships: [
+                    {
+                        foreignKeyName: "admin_id_fkey"
+                        columns: ["id"]
+                        referencedRelation: "student"
+                        referencedColumns: ["id"]
+                    },
+                ]
+            }
             event: {
                 Row: {
                     date: string | null
@@ -140,6 +159,37 @@ export interface Database {
                         foreignKeyName: "student_id_fkey"
                         columns: ["id"]
                         referencedRelation: "users"
+                        referencedColumns: ["id"]
+                    },
+                ]
+            }
+            templatecords: {
+                Row: {
+                    class_cords: string[] | null
+                    event_id: string
+                    eventname_cords: string[] | null
+                    id: number
+                    name_cords: string[] | null
+                }
+                Insert: {
+                    class_cords?: string[] | null
+                    event_id: string
+                    eventname_cords?: string[] | null
+                    id?: number
+                    name_cords?: string[] | null
+                }
+                Update: {
+                    class_cords?: string[] | null
+                    event_id?: string
+                    eventname_cords?: string[] | null
+                    id?: number
+                    name_cords?: string[] | null
+                }
+                Relationships: [
+                    {
+                        foreignKeyName: "templatecords_event_id_fkey"
+                        columns: ["event_id"]
+                        referencedRelation: "event"
                         referencedColumns: ["id"]
                     },
                 ]

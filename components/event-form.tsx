@@ -1,8 +1,9 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { ReloadIcon, RocketIcon } from "@radix-ui/react-icons"
+import { CalendarIcon, ReloadIcon, RocketIcon } from "@radix-ui/react-icons"
 import type { Session } from "@supabase/auth-helpers-nextjs"
+import { format } from "date-fns"
 import {
     adjectives,
     animals,
@@ -10,10 +11,17 @@ import {
     uniqueNamesGenerator,
 } from "unique-names-generator"
 
+import { cn } from "@/lib/utils"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { Button } from "@/components/ui/button"
+import { Calendar } from "@/components/ui/calendar"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import {
+    Popover,
+    PopoverContent,
+    PopoverTrigger,
+} from "@/components/ui/popover"
 import { useSupabase } from "@/app/supabase-provider"
 
 export type User = {
@@ -299,6 +307,166 @@ export const EventForm = ({
                     <AlertTitle>Success</AlertTitle>
                     <AlertDescription>
                         You have successfully registered for the event!
+                    </AlertDescription>
+                </Alert>
+            ) : (
+                <></>
+            )}
+        </div>
+    )
+}
+
+export const AdminEventForm = ({ session }: { session: Session | null }) => {
+    const { supabase } = useSupabase()
+
+    const [loading, setLoading] = useState(false)
+    const [error, setError] = useState<string | null>(null)
+    const [success, setSuccess] = useState(false)
+
+    const [eventName, setEventName] = useState<string | null>(null)
+    const [eventDescription, setEventDescription] = useState<string | null>(
+        null
+    )
+    const [startDate, setStartDate] = useState<Date>()
+    const [memberLimit, setMemberLimit] = useState(0)
+
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault()
+
+        try {
+            setError(null)
+            setLoading(true)
+
+            if (
+                (eventName && eventName.length > 0) ||
+                (eventDescription && eventDescription.length > 0) ||
+                startDate
+            ) {
+                const { error } = await supabase.from("event").insert({
+                    name: eventName,
+                    description: eventDescription,
+                    isopen: true,
+                    date: startDate?.toDateString() ?? Date.now().toString(),
+                    team_limit: memberLimit,
+                })
+                if (error) {
+                    throw new Error(error.message)
+                }
+
+                setSuccess(true)
+            } else {
+                throw new Error("Please enter valid inputs")
+            }
+        } catch (e: any) {
+            console.error(e)
+            setError(e.message)
+            setSuccess(false)
+        } finally {
+            setLoading(false)
+        }
+    }
+
+    return (
+        <div className="mt-10 space-y-3">
+            <h1 className="text-2xl font-bold">Create New Event</h1>
+            <form onSubmit={handleSubmit} className="space-y-8">
+                <div className="flex flex-col md:flex-row gap-5">
+                    <div className="space-y-2">
+                        <Label>Name</Label>
+                        <Input
+                            type="text"
+                            value={eventName ?? ""}
+                            onChange={(e) => setEventName(e.target.value)}
+                            disabled={loading}
+                            className="w-full"
+                        />
+                    </div>
+                    <div className="space-y-2">
+                        <Label>Description</Label>
+                        <Input
+                            type="text"
+                            value={eventDescription ?? ""}
+                            onChange={(e) =>
+                                setEventDescription(e.target.value)
+                            }
+                            disabled={loading}
+                        />
+                    </div>
+                </div>
+                <div className="flex flex-col md:flex-row gap-5">
+                    <div className="space-y-2">
+                        <Label>Team members limit</Label>
+                        <Input
+                            type="number"
+                            value={memberLimit ?? ""}
+                            onChange={(e) =>
+                                setMemberLimit(parseInt(e.target.value))
+                            }
+                            disabled={loading}
+                            className="w-full"
+                        />
+                    </div>
+                    <div className="space-y-2">
+                        <Label>Start Date</Label>
+                        <br />
+                        <Popover>
+                            <PopoverTrigger asChild>
+                                <Button
+                                    variant={"outline"}
+                                    className={cn(
+                                        "w-[240px] pl-3 text-left font-normal",
+                                        !startDate && "text-muted-foreground"
+                                    )}
+                                >
+                                    {startDate ? (
+                                        format(startDate, "PPP")
+                                    ) : (
+                                        <span>Pick a date</span>
+                                    )}
+                                    <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                                </Button>
+                            </PopoverTrigger>
+                            <PopoverContent
+                                className="w-auto p-0"
+                                align="start"
+                            >
+                                <Calendar
+                                    mode="single"
+                                    selected={startDate ?? new Date(Date.now())}
+                                    onSelect={(e) => {
+                                        setStartDate(e)
+                                    }}
+                                    disabled={(date) =>
+                                        date < new Date("1900-01-01")
+                                    }
+                                    initialFocus
+                                />
+                            </PopoverContent>
+                        </Popover>
+                    </div>
+                </div>
+
+                <Button
+                    disabled={loading === !success}
+                    className="w-full"
+                    type="submit"
+                >
+                    Create New Event
+                </Button>
+            </form>
+
+            {error ? (
+                <p className="mt-8 text-xs text-red-500">{error}</p>
+            ) : (
+                <></>
+            )}
+
+            {success ? (
+                <Alert className="mt-8">
+                    <RocketIcon className="h-4 w-4" />
+                    <AlertTitle>Success</AlertTitle>
+                    <AlertDescription>
+                        You have successfully registered yourself!
                     </AlertDescription>
                 </Alert>
             ) : (
