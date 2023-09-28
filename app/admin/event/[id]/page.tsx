@@ -2,6 +2,7 @@ import { Badge } from "@/components/ui/badge"
 import { DataTable } from "@/components/data-table"
 import { DeleteButton } from "@/components/delete-button"
 import { EndEventForm } from "@/components/end-event-form"
+import { RefreshButton } from "@/components/refresh-button"
 import { createServerSupabaseClient } from "@/app/supabase-server"
 
 export default async function AdminEventPage({ params }: { params: any }) {
@@ -44,9 +45,9 @@ export default async function AdminEventPage({ params }: { params: any }) {
     return adminData && eventData && eventParticipantData ? (
         <div className="container w-full">
             <div className="flex flex-col items-left justify-center">
-                <div className="flex flex-row justify-between items-start">
+                <div className="flex flex-row flex-wrap justify-between items-start">
                     <div className="flex flex-col gap-5">
-                        <div className="flex flex-row gap-10">
+                        <div className="flex flex-row flex-wrap gap-10">
                             <h1 className="text-3xl font-bold">
                                 {eventData.name}
                             </h1>
@@ -65,7 +66,10 @@ export default async function AdminEventPage({ params }: { params: any }) {
                         </p>
                     </div>
 
-                    <DeleteButton event={eventData} />
+                    <div className="flex gap-2">
+                        <RefreshButton />
+                        <DeleteButton event={eventData} />
+                    </div>
                 </div>
 
                 <div className="mt-16">

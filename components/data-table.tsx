@@ -1,6 +1,7 @@
 "use client"
 
 import * as React from "react"
+import { useRouter } from "next/navigation"
 import {
     ColumnDef,
     ColumnFiltersState,
@@ -95,6 +96,7 @@ export const columns: ColumnDef<EventParticipantData>[] = [
         id: "actions",
         header: "Actions",
         cell: ({ row }) => {
+            const router = useRouter()
             const { supabase } = useSupabase()
 
             return (
@@ -113,6 +115,7 @@ export const columns: ColumnDef<EventParticipantData>[] = [
                                         .from("group")
                                         .delete()
                                         .eq("id", row.original.group?.id ?? "")
+                                    await router.refresh()
                                 }}
                                 size={"sm"}
                                 variant={"destructive"}

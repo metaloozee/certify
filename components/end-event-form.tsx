@@ -63,7 +63,7 @@ export const EndEventForm = ({ event }: { event: EventData }) => {
     return (
         <div>
             <form onSubmit={handleSubmit} className="space-y-8 w-full">
-                <div className="flex flex-row gap-10 w-full justify-between">
+                <div className="flex flex-row flex-wrap gap-10 w-full justify-between">
                     <div className="flex flex-col gap-3 w-full">
                         <Label>Winner Group ID</Label>
                         <Input
