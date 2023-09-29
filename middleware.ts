@@ -9,20 +9,22 @@ export async function middleware(req: NextRequest) {
 
     // Refresh session if expired - required for Server Components
     // https://supabase.com/docs/guides/auth/auth-helpers/nextjs#managing-session-with-middleware
-    const session = await supabase.auth.getSession()
-    if (session.data.session !== null) {
-        const user = session.data.session.user
-        const { data: userData, error: userError } = await supabase
+    const {
+        data: { session },
+    } = await supabase.auth.getSession()
+    if (session) {
+        const user = session.user
+        const { data: studentData, error: studentError } = await supabase
             .from("student")
-            .select("*")
+            .select("enrollment")
             .eq("id", user.id)
-            .maybeSingle()
+            .single()
 
-        if (userError) {
-            throw new Error(userError.message)
+        if (studentError) {
+            throw new Error(studentError.message)
         }
 
-        if (userData?.enrollment === null) {
+        if (!studentData || studentData.enrollment === null) {
             return NextResponse.redirect(new URL("/welcome", req.url))
         }
     }
