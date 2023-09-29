@@ -48,39 +48,9 @@ export const EventForm = ({
 }) => {
     const { supabase } = useSupabase()
 
-    const [isLeaderRegistered, setIsLeaderRegistered] = useState(false)
-
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState<string | null>(null)
     const [success, setSuccess] = useState(false)
-
-    useEffect(() => {
-        const checkIfLeaderHasRegistered = async () => {
-            const { data: groupMemberData, error: groupMemberDataError } =
-                await supabase
-                    .from("groupmember")
-                    .select("*")
-                    .eq("student_id", session?.user.id ?? "")
-                    .maybeSingle()
-            if (groupMemberDataError || !groupMemberData) {
-                return setIsLeaderRegistered(false)
-            }
-
-            const { data, error } = await supabase
-                .from("eventparticipant")
-                .select("*")
-                .eq("group_id", groupMemberData?.group_id ?? "")
-                .eq("event_id", event.id)
-                .maybeSingle()
-            if (error || !data) {
-                return setIsLeaderRegistered(false)
-            }
-
-            setIsLeaderRegistered(true)
-        }
-
-        checkIfLeaderHasRegistered()
-    }, [])
 
     const [teamName] = useState<string>(() =>
         uniqueNamesGenerator({
@@ -108,18 +78,6 @@ export const EventForm = ({
         setMemberEnrollmentNumbers(updatedMembers)
     }
 
-    if (isLeaderRegistered) {
-        return (
-            <div className="flex flex-col gap-2 justify-center items-center">
-                <h1 className="text-3xl font-bold">User Already Registered</h1>
-                <p>
-                    You have already registered yourself in this event, kindly
-                    contact the admins if you want to remove yourself.
-                </p>
-            </div>
-        )
-    }
-
     const checkTeammateRegisteration = async (enrollmentNumbers: string[]) => {
         if (
             (enrollmentNumbers.length > 0 &&
@@ -130,53 +88,29 @@ export const EventForm = ({
         }
 
         for (const enrollmentNumber of enrollmentNumbers) {
-            const { data: studentData, error: studentDataError } =
-                await supabase
-                    .from("student")
-                    .select("id")
-                    .eq("enrollment", enrollmentNumber)
-                    .maybeSingle()
+            const { data: groups, error: groupError } = await supabase
+                .from("eventparticipant")
+                .select(
+                    `group!inner(id, groupmember!inner(student_id, student!inner(enrollment)))`
+                )
+                .eq("event_id", event.id)
+                .eq("group.groupmember.student.enrollment", enrollmentNumber)
 
-            if (studentDataError) {
-                throw new Error(studentDataError.message)
+            if (groupError) {
+                throw new Error(groupError.message)
             }
 
-            if (!studentData) {
-                throw new Error("Student not found.")
+            if (!groups) {
+                continue
             }
 
-            const { data: groupData, error: groupDataError } = await supabase
-                .from("groupmember")
-                .select("*")
-                .eq("student_id", studentData.id)
-                .maybeSingle()
-
-            if (groupDataError) {
-                throw new Error(groupDataError.message)
+            if (groups && groups.length > 0) {
+                console.log(enrollmentNumber + " is registered")
+                return true
             }
-
-            if (!groupData) {
-                return false
-            }
-
-            const { data: eventRegistered, error: eventRegisteredError } =
-                await supabase
-                    .from("eventparticipant")
-                    .select("*")
-                    .eq("event_id", event.id)
-                    .eq("group_id", groupData.group_id ?? "")
-                    .maybeSingle()
-
-            if (eventRegisteredError) {
-                throw new Error(eventRegisteredError.message)
-            }
-
-            if (!eventRegistered) {
-                return false
-            }
-
-            return true
         }
+
+        return false
     }
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -207,36 +141,6 @@ export const EventForm = ({
                 throw new Error(groupDataError.message)
             }
 
-            // Adding members to the Group
-            if (
-                memberEnrollmentNumbers.length > 0 &&
-                memberEnrollmentNumbers[0].length > 0
-            ) {
-                for (const enrollmentNumber of memberEnrollmentNumbers) {
-                    const { data: studentData, error: studentDataError } =
-                        await supabase
-                            .from("student")
-                            .select("id")
-                            .eq("enrollment", enrollmentNumber)
-                            .limit(1)
-
-                    if (studentDataError) {
-                        throw new Error(studentDataError.message)
-                    }
-
-                    const { error: memberGroupError } = await supabase
-                        .from("groupmember")
-                        .insert({
-                            group_id: groupData.id,
-                            student_id: studentData[0].id,
-                        })
-
-                    if (memberGroupError) {
-                        throw new Error(memberGroupError.message)
-                    }
-                }
-            }
-
             // Adding the leader
             const { error: memberGroupError } = await supabase
                 .from("groupmember")
@@ -247,6 +151,36 @@ export const EventForm = ({
 
             if (memberGroupError) {
                 throw new Error(memberGroupError.message)
+            }
+
+            // Adding members to the Group
+            console.log(memberEnrollmentNumbers)
+            for (const enrollmentNumber of memberEnrollmentNumbers) {
+                if (enrollmentNumber.length === 0) {
+                    continue
+                }
+
+                const { data: studentData, error: studentDataError } =
+                    await supabase
+                        .from("student")
+                        .select("id")
+                        .eq("enrollment", enrollmentNumber)
+                        .maybeSingle()
+
+                if (studentDataError) {
+                    throw new Error(studentDataError.message)
+                }
+
+                const { error: memberGroupError } = await supabase
+                    .from("groupmember")
+                    .insert({
+                        group_id: groupData.id,
+                        student_id: studentData?.id,
+                    })
+
+                if (memberGroupError) {
+                    throw new Error(memberGroupError.message)
+                }
             }
 
             // Creating event participation

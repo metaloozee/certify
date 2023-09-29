@@ -25,6 +25,7 @@ export default async function EventPage({ params }: { params: any }) {
         .from("eventparticipant")
         .select(`group!inner(id, groupmember!inner(student_id))`)
         .eq("group.groupmember.student_id", session?.user.id ?? "")
+        .eq("event_id", event?.id ?? "")
 
     if (!session || !user) {
         return (
