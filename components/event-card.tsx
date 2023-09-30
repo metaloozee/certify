@@ -43,9 +43,11 @@ export const EventCard = async ({ data }: { data: EventData }) => {
                 </p>
             </CardContent>
             <CardFooter>
-                <Link className="w-full" href={`/event/${data.id}`}>
-                    <Button className="w-full">Register</Button>
-                </Link>
+                <Button className="w-full" asChild>
+                    <Link className="w-full" href={`/event/${data.id}`}>
+                        Register
+                    </Link>
+                </Button>
             </CardFooter>
         </Card>
     )
@@ -74,9 +76,11 @@ export const AdminOngoingEventCard = async ({ data }: { data: EventData }) => {
                 </p>
             </CardContent>
             <CardFooter>
-                <Link className="w-full" href={`/admin/event/${data.id}`}>
-                    <Button className="w-full">Manage Event</Button>
-                </Link>
+                <Button asChild className="w-full">
+                    <Link className="w-full" href={`/admin/event/${data.id}`}>
+                        Manage Event
+                    </Link>
+                </Button>
             </CardFooter>
         </Card>
     )
