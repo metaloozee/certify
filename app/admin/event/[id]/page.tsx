@@ -28,6 +28,7 @@ export default async function AdminEventPage({ params }: { params: any }) {
             .select(
                 `
             id,
+            event_id,
             group (
                 id,
                 name,

@@ -2,6 +2,7 @@
 
 import React, { useState } from "react"
 import { useRouter } from "next/navigation"
+import { ReloadIcon } from "@radix-ui/react-icons"
 import {
     ColumnDef,
     ColumnFiltersState,
@@ -42,10 +43,13 @@ import {
     TableHeader,
     TableRow,
 } from "@/components/ui/table"
+import { ToastAction } from "@/components/ui/toast"
+import { useToast } from "@/components/ui/use-toast"
 import { useSupabase } from "@/app/supabase-provider"
 
 export type EventParticipantData = {
     id: string
+    event_id: string | null
     group: {
         id: string
         name: string | null
@@ -101,13 +105,112 @@ export const columns: ColumnDef<EventParticipantData>[] = [
         id: "result",
         header: "Result",
         cell: ({ row }) => {
-            const router = useRouter()
+            const { toast } = useToast()
             const { supabase } = useSupabase()
 
             const [position, setPosition] = useState<string>("participant")
+            const [loading, setLoading] = useState(false)
 
-            const handleSubmit = async () => {
-                console.log(position)
+            const handleSubmit = async (e: React.FormEvent) => {
+                e.preventDefault()
+
+                try {
+                    setLoading(true)
+                    if (position === "winner") {
+                        const { error } = await supabase
+                            .from("event")
+                            .update({ winner: row.original.group?.id })
+                            .eq("id", row.original.event_id ?? "")
+
+                        if (error) {
+                            throw new Error(error.message)
+                        }
+                    } else if (position === "runnerup") {
+                        const { error } = await supabase
+                            .from("event")
+                            .update({ runner_up: row.original.group?.id })
+                            .eq("id", row.original.event_id ?? "")
+
+                        if (error) {
+                            throw new Error(error.message)
+                        }
+                    } else if (position === "secondrunnerup") {
+                        const { error } = await supabase
+                            .from("event")
+                            .update({
+                                second_runner_up: row.original.group?.id,
+                            })
+                            .eq("id", row.original.event_id ?? "")
+
+                        if (error) {
+                            throw new Error(error.message)
+                        }
+                    } else if (position === "participant") {
+                        const { data: eventData } = await supabase
+                            .from("event")
+                            .select("winner, runner_up, second_runner_up")
+                            .eq("id", row.original.event_id ?? "")
+                            .single()
+
+                        if (
+                            eventData?.winner === null &&
+                            eventData.runner_up === null &&
+                            eventData.second_runner_up === null
+                        ) {
+                            return toast({
+                                title: "Data Updated!",
+                                description: `Successfully updated the group's position as ${position}`,
+                            })
+                        }
+
+                        if (eventData?.winner === row.original.group?.id) {
+                            const { error } = await supabase
+                                .from("event")
+                                .update({ winner: null })
+                                .eq("id", row.original.event_id ?? "")
+
+                            if (error) {
+                                throw new Error(error.message)
+                            }
+                        } else if (
+                            eventData?.runner_up === row.original.group?.id
+                        ) {
+                            const { error } = await supabase
+                                .from("event")
+                                .update({ runner_up: null })
+                                .eq("id", row.original.event_id ?? "")
+
+                            if (error) {
+                                throw new Error(error.message)
+                            }
+                        } else if (
+                            eventData?.second_runner_up ===
+                            row.original.group?.id
+                        ) {
+                            const { error } = await supabase
+                                .from("event")
+                                .update({ second_runner_up: null })
+                                .eq("id", row.original.event_id ?? "")
+
+                            if (error) {
+                                throw new Error(error.message)
+                            }
+                        }
+                    }
+
+                    return toast({
+                        title: "Data Updated!",
+                        description: `Successfully updated the group's position as ${position}`,
+                    })
+                } catch (e: any) {
+                    console.error(e)
+                    toast({
+                        title: "Uh Oh!",
+                        description: `An unknown error occurred!`,
+                    })
+                } finally {
+                    setLoading(false)
+                }
             }
 
             return (
@@ -136,9 +239,15 @@ export const columns: ColumnDef<EventParticipantData>[] = [
                         </SelectContent>
                     </Select>
 
-                    <Button type="submit" variant={"ghost"}>
-                        <Save className="text-green-500 h-4 w-4" />
-                    </Button>
+                    {loading ? (
+                        <Button disabled type="submit" variant={"ghost"}>
+                            <ReloadIcon className="mr-2 h-4 w-4 animate-spin" />
+                        </Button>
+                    ) : (
+                        <Button type="submit" variant={"ghost"}>
+                            <Save className="text-green-500 h-4 w-4" />
+                        </Button>
+                    )}
                 </form>
             )
         },
