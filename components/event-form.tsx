@@ -206,6 +206,10 @@ export const EventForm = ({
         <div className="mt-10 container max-w-lg">
             <form onSubmit={handleSubmit} className="space-y-8">
                 <div className="space-y-2">
+                    <Label>{`Team Name (note this down)`}</Label>
+                    <Input disabled value={teamName} />
+                </div>
+                <div className="space-y-2">
                     <Label>{`Team Leader's Enrollment Number`}</Label>
                     <Input disabled value={leaderEnrollmentNumber} />
                 </div>

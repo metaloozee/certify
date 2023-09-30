@@ -1,6 +1,6 @@
 "use client"
 
-import * as React from "react"
+import React, { useState } from "react"
 import { useRouter } from "next/navigation"
 import {
     ColumnDef,
@@ -12,7 +12,7 @@ import {
     useReactTable,
     VisibilityState,
 } from "@tanstack/react-table"
-import { MoreHorizontal } from "lucide-react"
+import { MoreHorizontal, Save, TrashIcon } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import {
@@ -25,6 +25,15 @@ import {
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { Input } from "@/components/ui/input"
+import {
+    Select,
+    SelectContent,
+    SelectGroup,
+    SelectItem,
+    SelectLabel,
+    SelectTrigger,
+    SelectValue,
+} from "@/components/ui/select"
 import {
     Table,
     TableBody,
@@ -54,10 +63,6 @@ export type EventParticipantData = {
 
 export const columns: ColumnDef<EventParticipantData>[] = [
     {
-        accessorKey: "group.id",
-        header: "Group ID",
-    },
-    {
         accessorKey: "group.name",
         header: "Group Name",
     },
@@ -80,7 +85,7 @@ export const columns: ColumnDef<EventParticipantData>[] = [
     },
     {
         accessorKey: "group.groupmember",
-        header: "Enrollment IDs",
+        header: "Enrollment No",
         cell: ({ row }) => {
             const members = row.original.group?.groupmember || []
             return (
@@ -93,38 +98,72 @@ export const columns: ColumnDef<EventParticipantData>[] = [
         },
     },
     {
-        id: "actions",
-        header: "Actions",
+        id: "result",
+        header: "Result",
+        cell: ({ row }) => {
+            const router = useRouter()
+            const { supabase } = useSupabase()
+
+            const [position, setPosition] = useState<string>("participant")
+
+            const handleSubmit = async () => {
+                console.log(position)
+            }
+
+            return (
+                <form className="flex flex-row gap-2" onSubmit={handleSubmit}>
+                    <Select
+                        onValueChange={(e) => setPosition(e as string)}
+                        defaultValue={position}
+                    >
+                        <SelectTrigger>
+                            <SelectValue placeholder={position} />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectGroup>
+                                <SelectLabel>Position</SelectLabel>
+                                <SelectItem value="winner">Winner</SelectItem>
+                                <SelectItem value="runnerup">
+                                    Runner Up
+                                </SelectItem>
+                                <SelectItem value="secondrunnerup">
+                                    Second Runner Up
+                                </SelectItem>
+                                <SelectItem value="participant">
+                                    Participant
+                                </SelectItem>
+                            </SelectGroup>
+                        </SelectContent>
+                    </Select>
+
+                    <Button type="submit" variant={"ghost"}>
+                        <Save className="text-green-500 h-4 w-4" />
+                    </Button>
+                </form>
+            )
+        },
+    },
+    {
+        id: "action",
+        header: "Action",
         cell: ({ row }) => {
             const router = useRouter()
             const { supabase } = useSupabase()
 
             return (
-                <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" className="h-8 w-8 p-0">
-                            <span className="sr-only">Open menu</span>
-                            <MoreHorizontal className="h-4 w-4" />
-                        </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
-                        <DropdownMenuItem>
-                            <Button
-                                onClick={async () => {
-                                    await supabase
-                                        .from("group")
-                                        .delete()
-                                        .eq("id", row.original.group?.id ?? "")
-                                    await router.refresh()
-                                }}
-                                size={"sm"}
-                                variant={"destructive"}
-                            >
-                                Delete Group
-                            </Button>
-                        </DropdownMenuItem>
-                    </DropdownMenuContent>
-                </DropdownMenu>
+                <Button
+                    onClick={async () => {
+                        await supabase
+                            .from("group")
+                            .delete()
+                            .eq("id", row.original.group?.id ?? "")
+                        await router.refresh()
+                    }}
+                    size={"sm"}
+                    variant={"ghost"}
+                >
+                    <TrashIcon className="text-red-500 h-4 w-4" />
+                </Button>
             )
         },
     },

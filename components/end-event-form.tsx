@@ -19,12 +19,6 @@ export const EndEventForm = ({ event }: { event: EventData }) => {
     const [error, setError] = useState<string | null>(null)
     const [success, setSuccess] = useState(false)
 
-    const [winnerId, setWinnerId] = useState<string | null>(null)
-    const [runnerUpId, setRunnerUpId] = useState<string | null>(null)
-    const [secondRunnerUpId, setSecondRunnerUpId] = useState<string | null>(
-        null
-    )
-
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
 
@@ -32,25 +26,18 @@ export const EndEventForm = ({ event }: { event: EventData }) => {
             setError(null)
             setLoading(true)
 
-            if (winnerId && winnerId.length > 0) {
-                const { error } = await supabase
-                    .from("event")
-                    .update({
-                        winner: winnerId,
-                        runner_up: runnerUpId ?? null,
-                        second_runner_up: secondRunnerUpId ?? null,
-                        isopen: false,
-                    })
-                    .eq("id", event.id)
-                if (error) {
-                    throw new Error(error.message)
-                }
-
-                setSuccess(true)
-                router.push("/admin")
-            } else {
-                throw new Error("There should atleast be a winner.")
+            const { error } = await supabase
+                .from("event")
+                .update({
+                    isopen: false,
+                })
+                .eq("id", event.id)
+            if (error) {
+                throw new Error(error.message)
             }
+
+            setSuccess(true)
+            router.push("/admin")
         } catch (e: any) {
             console.error(e)
             setError(e.message)
@@ -63,38 +50,6 @@ export const EndEventForm = ({ event }: { event: EventData }) => {
     return (
         <div>
             <form onSubmit={handleSubmit} className="space-y-8 w-full">
-                <div className="flex flex-row flex-wrap gap-10 w-full justify-between">
-                    <div className="flex flex-col gap-3 w-full">
-                        <Label>Winner Group ID</Label>
-                        <Input
-                            disabled={loading}
-                            type="text"
-                            value={winnerId ?? ""}
-                            onChange={(e) => setWinnerId(e.target.value)}
-                        />
-                    </div>
-                    <div className="flex flex-col gap-3 w-full">
-                        <Label>Runner-Up Group ID</Label>
-                        <Input
-                            disabled={loading}
-                            type="text"
-                            value={runnerUpId ?? ""}
-                            onChange={(e) => setRunnerUpId(e.target.value)}
-                        />
-                    </div>
-                    <div className="flex flex-col gap-3 w-full">
-                        <Label>Second Runner-Up Group ID</Label>
-                        <Input
-                            disabled={loading}
-                            type="text"
-                            value={secondRunnerUpId ?? ""}
-                            onChange={(e) =>
-                                setSecondRunnerUpId(e.target.value)
-                            }
-                        />
-                    </div>
-                </div>
-
                 <Button
                     disabled={loading === !success}
                     className="w-full"
