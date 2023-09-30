@@ -20,6 +20,7 @@ import {
 } from "./ui/dropdown-menu"
 
 export const OnboardingForm = ({ session }: { session: Session | null }) => {
+    const router = useRouter()
     const { supabase } = useSupabase()
 
     const [loading, setLoading] = useState(false)
@@ -75,6 +76,7 @@ export const OnboardingForm = ({ session }: { session: Session | null }) => {
                 }
 
                 setSuccess(true)
+                router.refresh()
             } else {
                 throw new Error("Please enter valid inputs")
             }
