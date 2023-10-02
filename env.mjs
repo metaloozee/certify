@@ -5,10 +5,6 @@ const server = z.object({
     NEXT_PUBLIC_SUPABASE_ANON_KEY: z.string(),
 
     NODE_ENV: z.enum(["development", "test", "production"]),
-    NEXT_PUBLIC_SITE_URL: z.preprocess(
-        (str) => process.env.VERCEL_URL ?? str,
-        process.env.VERCEL ? z.string().min(1) : z.string().url()
-    ),
 })
 
 const client = z.object({
@@ -26,7 +22,6 @@ const processEnv = {
     NEXT_PUBLIC_SUPABASE_URL: process.env.NEXT_PUBLIC_SUPABASE_URL,
     NEXT_PUBLIC_SUPABASE_ANON_KEY: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
     NODE_ENV: process.env.NODE_ENV,
-    NEXT_PUBLIC_SITE_URL: process.env.NEXT_PUBLIC_SITE_URL,
 }
 
 const merged = server.merge(client)
