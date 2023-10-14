@@ -167,8 +167,11 @@ export const EventForm = ({
                         .eq("enrollment", enrollmentNumber)
                         .maybeSingle()
 
-                if (studentDataError) {
-                    throw new Error(studentDataError.message)
+                if (studentDataError || !studentData) {
+                    throw new Error(
+                        "One of the enrollment numbers provided by you is invalid or the student has not registered with us." ??
+                            studentDataError?.message
+                    )
                 }
 
                 const { error: memberGroupError } = await supabase
