@@ -11,6 +11,8 @@ import { Label } from "@/components/ui/label"
 import type { EventData } from "@/components/event-card"
 import { useSupabase } from "@/app/supabase-provider"
 
+import { TemplateConfigForm } from "./template-config"
+
 export const EndEventForm = ({ event }: { event: EventData }) => {
     const router = useRouter()
     const { supabase } = useSupabase()
@@ -18,6 +20,12 @@ export const EndEventForm = ({ event }: { event: EventData }) => {
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState<string | null>(null)
     const [success, setSuccess] = useState(false)
+
+    const [nameCords, setNameCords] = useState<object | null>(null)
+    const [departmentCords, setDepartmentCords] = useState<object | null>(null)
+    const [eventCords, setEventCords] = useState<object | null>(null)
+    const [dateCords, setDateCords] = useState<object | null>(null)
+    const [winnerDeclared, setWinnerDeclared] = useState(false)
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
@@ -47,14 +55,20 @@ export const EndEventForm = ({ event }: { event: EventData }) => {
         }
     }
 
-    return (
+    return winnerDeclared ? (
         <div>
-            <form onSubmit={handleSubmit} className="space-y-8 w-full">
-                <Button
-                    disabled={loading === !success}
-                    className="w-full"
-                    type="submit"
-                >
+            <h3 className="text-xl font-bold mb-10">
+                Please upload and configure your template
+            </h3>
+            <TemplateConfigForm event={event} />
+        </div>
+    ) : (
+        <div>
+            <form
+                onSubmit={() => setWinnerDeclared(true)}
+                className="space-y-8 w-full"
+            >
+                <Button disabled={loading === !success} className="w-full">
                     End Event & Declare Winners
                 </Button>
             </form>
