@@ -8,12 +8,8 @@ export const CanvasImage = ({ image }: { image: HTMLImageElement }) => {
     const [dateCords, setDateCords] = useState<number[]>([-1, -1])
     const [eventCords, setEventCords] = useState<number[]>([-1, -1])
 
-    const [classConfirmed, setClassConfirmed] = useState(false)
-    const [dateConfirmed, setdateConfirmed] = useState(false)
-    const [eventConfirmed, setEventConfirmed] = useState(false)
-    const [nameConfirmed, setNameConfirmed] = useState(false)
-
     const [status, setStatus] = useState(0)
+
     const drawImageOnCanvas = () => {
         const element: any = document.getElementById("canvas")
         const canvas: HTMLCanvasElement = element
