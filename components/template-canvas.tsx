@@ -1,5 +1,8 @@
 import { useEffect, useState } from "react"
 
+import { Label } from "@/components/ui/label"
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
+
 import { Button } from "./ui/button"
 
 export const CanvasImage = ({ image }: { image: HTMLImageElement }) => {
@@ -68,6 +71,41 @@ export const CanvasImage = ({ image }: { image: HTMLImageElement }) => {
 
     return (
         <div>
+            <RadioGroup className="flex mt-5" defaultValue="name">
+                <div className="flex items-center space-x-2">
+                    <RadioGroupItem
+                        onClick={() => setStatus(0)}
+                        value="name"
+                        id="name"
+                    />
+                    <Label htmlFor="name">Name</Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                    <RadioGroupItem
+                        onClick={() => setStatus(1)}
+                        value="class"
+                        id="class"
+                    />
+                    <Label htmlFor="class">Class</Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                    <RadioGroupItem
+                        onClick={() => setStatus(2)}
+                        value="date"
+                        id="date"
+                    />
+                    <Label htmlFor="date">Date</Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                    <RadioGroupItem
+                        onClick={() => setStatus(3)}
+                        value="event"
+                        id="event"
+                    />
+                    <Label htmlFor="event">Event Name</Label>
+                </div>
+            </RadioGroup>
+
             <canvas
                 className="my-10"
                 id="canvas"

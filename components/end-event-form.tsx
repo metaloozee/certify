@@ -12,6 +12,7 @@ import type { EventData } from "@/components/event-card"
 import { useSupabase } from "@/app/supabase-provider"
 
 import { TemplateConfigForm } from "./template-config"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "./ui/tabs"
 
 export const EndEventForm = ({ event }: { event: EventData }) => {
     const router = useRouter()
@@ -60,15 +61,43 @@ export const EndEventForm = ({ event }: { event: EventData }) => {
             <h3 className="text-xl font-bold mb-10">
                 Please upload and configure your template
             </h3>
-            <TemplateConfigForm event={event} />
+            <div className="container max-w-xl">
+                <Tabs defaultValue="ongoing-events" className="w-full">
+                    <TabsList>
+                        <TabsTrigger value="winner-config">Winner</TabsTrigger>
+                        <TabsTrigger value="firstrunner-config">
+                            First Runner Up
+                        </TabsTrigger>
+                        <TabsTrigger value="secondrunner-config">
+                            Second Runner Up
+                        </TabsTrigger>
+                        <TabsTrigger value="participant-config">
+                            Participant
+                        </TabsTrigger>
+                    </TabsList>
+                    <TabsContent value="winner-config">
+                        <TemplateConfigForm event={event} />
+                    </TabsContent>
+                    <TabsContent value="firstrunner-config">
+                        <TemplateConfigForm event={event} />
+                    </TabsContent>
+                    <TabsContent value="secondrunner-config">
+                        <TemplateConfigForm event={event} />
+                    </TabsContent>
+                    <TabsContent value="participant-config">
+                        <TemplateConfigForm event={event} />
+                    </TabsContent>
+                </Tabs>
+            </div>
         </div>
     ) : (
         <div>
-            <form
-                onSubmit={() => setWinnerDeclared(true)}
-                className="space-y-8 w-full"
-            >
-                <Button disabled={loading === !success} className="w-full">
+            <form className="space-y-8 w-full">
+                <Button
+                    onClick={() => setWinnerDeclared(true)}
+                    disabled={loading === !success}
+                    className="w-full"
+                >
                     End Event & Declare Winners
                 </Button>
             </form>
