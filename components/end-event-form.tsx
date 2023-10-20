@@ -12,7 +12,6 @@ import type { EventData } from "@/components/event-card"
 import { useSupabase } from "@/app/supabase-provider"
 
 import { TemplateConfigForm } from "./template-config"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "./ui/tabs"
 
 export const EndEventForm = ({ event }: { event: EventData }) => {
     const router = useRouter()
@@ -22,11 +21,33 @@ export const EndEventForm = ({ event }: { event: EventData }) => {
     const [error, setError] = useState<string | null>(null)
     const [success, setSuccess] = useState(false)
 
-    const [nameCords, setNameCords] = useState<object | null>(null)
-    const [departmentCords, setDepartmentCords] = useState<object | null>(null)
-    const [eventCords, setEventCords] = useState<object | null>(null)
-    const [dateCords, setDateCords] = useState<object | null>(null)
     const [winnerDeclared, setWinnerDeclared] = useState(false)
+
+    const [winnerCords, setWinnerCords] = useState<number[][]>([
+        [-1, -1], // name
+        [-1, -1], // class
+        [-1, -1], // date
+        [-1, -1], // event
+    ])
+
+    const [firstRunnerCords, setFirstRunnerCords] = useState<number[][]>([
+        [-1, -1], // name
+        [-1, -1], // class
+        [-1, -1], // date
+        [-1, -1], // event
+    ])
+    const [secondRunnerCords, setSecondRunnerCords] = useState<number[][]>([
+        [-1, -1], // name
+        [-1, -1], // class
+        [-1, -1], // date
+        [-1, -1], // event
+    ])
+    const [participantCords, setParticipantCords] = useState<number[][]>([
+        [-1, -1], // name
+        [-1, -1], // class
+        [-1, -1], // date
+        [-1, -1], // event
+    ])
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
@@ -53,6 +74,10 @@ export const EndEventForm = ({ event }: { event: EventData }) => {
             setSuccess(false)
         } finally {
             setLoading(false)
+            console.log(winnerCords)
+            console.log(firstRunnerCords)
+            console.log(secondRunnerCords)
+            console.log(participantCords)
         }
     }
 
@@ -62,32 +87,25 @@ export const EndEventForm = ({ event }: { event: EventData }) => {
                 Please upload and configure your template
             </h3>
             <div className="container max-w-xl">
-                <Tabs defaultValue="ongoing-events" className="w-full">
-                    <TabsList>
-                        <TabsTrigger value="winner-config">Winner</TabsTrigger>
-                        <TabsTrigger value="firstrunner-config">
-                            First Runner Up
-                        </TabsTrigger>
-                        <TabsTrigger value="secondrunner-config">
-                            Second Runner Up
-                        </TabsTrigger>
-                        <TabsTrigger value="participant-config">
-                            Participant
-                        </TabsTrigger>
-                    </TabsList>
-                    <TabsContent value="winner-config">
-                        <TemplateConfigForm event={event} />
-                    </TabsContent>
-                    <TabsContent value="firstrunner-config">
-                        <TemplateConfigForm event={event} />
-                    </TabsContent>
-                    <TabsContent value="secondrunner-config">
-                        <TemplateConfigForm event={event} />
-                    </TabsContent>
-                    <TabsContent value="participant-config">
-                        <TemplateConfigForm event={event} />
-                    </TabsContent>
-                </Tabs>
+                <TemplateConfigForm
+                    winnerCords={winnerCords}
+                    firstRunnerCords={firstRunnerCords}
+                    secondRunnerCords={secondRunnerCords}
+                    participantCords={participantCords}
+                    setWinnerCords={setWinnerCords}
+                    setFirstRunnerCords={setFirstRunnerCords}
+                    setSecondRunnerCords={setSecondRunnerCords}
+                    setParticipantCords={setParticipantCords}
+                />
+            </div>
+            <div>
+                <Button
+                    onClick={handleSubmit}
+                    disabled={loading === !success}
+                    className="w-full"
+                >
+                    End Event and Generate Certificates
+                </Button>
             </div>
         </div>
     ) : (
