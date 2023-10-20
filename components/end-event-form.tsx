@@ -11,6 +11,8 @@ import { Label } from "@/components/ui/label"
 import type { EventData } from "@/components/event-card"
 import { useSupabase } from "@/app/supabase-provider"
 
+import { TemplateConfigForm } from "./template-config"
+
 export const EndEventForm = ({ event }: { event: EventData }) => {
     const router = useRouter()
     const { supabase } = useSupabase()
@@ -18,6 +20,34 @@ export const EndEventForm = ({ event }: { event: EventData }) => {
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState<string | null>(null)
     const [success, setSuccess] = useState(false)
+
+    const [winnerDeclared, setWinnerDeclared] = useState(false)
+
+    const [winnerCords, setWinnerCords] = useState<number[][]>([
+        [-1, -1], // name
+        [-1, -1], // class
+        [-1, -1], // date
+        [-1, -1], // event
+    ])
+
+    const [firstRunnerCords, setFirstRunnerCords] = useState<number[][]>([
+        [-1, -1], // name
+        [-1, -1], // class
+        [-1, -1], // date
+        [-1, -1], // event
+    ])
+    const [secondRunnerCords, setSecondRunnerCords] = useState<number[][]>([
+        [-1, -1], // name
+        [-1, -1], // class
+        [-1, -1], // date
+        [-1, -1], // event
+    ])
+    const [participantCords, setParticipantCords] = useState<number[][]>([
+        [-1, -1], // name
+        [-1, -1], // class
+        [-1, -1], // date
+        [-1, -1], // event
+    ])
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
@@ -44,16 +74,47 @@ export const EndEventForm = ({ event }: { event: EventData }) => {
             setSuccess(false)
         } finally {
             setLoading(false)
+            console.log(winnerCords)
+            console.log(firstRunnerCords)
+            console.log(secondRunnerCords)
+            console.log(participantCords)
         }
     }
 
-    return (
+    return winnerDeclared ? (
         <div>
-            <form onSubmit={handleSubmit} className="space-y-8 w-full">
+            <h3 className="text-xl font-bold mb-10">
+                Please upload and configure your template
+            </h3>
+            <div className="container max-w-xl">
+                <TemplateConfigForm
+                    winnerCords={winnerCords}
+                    firstRunnerCords={firstRunnerCords}
+                    secondRunnerCords={secondRunnerCords}
+                    participantCords={participantCords}
+                    setWinnerCords={setWinnerCords}
+                    setFirstRunnerCords={setFirstRunnerCords}
+                    setSecondRunnerCords={setSecondRunnerCords}
+                    setParticipantCords={setParticipantCords}
+                />
+            </div>
+            <div>
                 <Button
+                    onClick={handleSubmit}
                     disabled={loading === !success}
                     className="w-full"
-                    type="submit"
+                >
+                    End Event and Generate Certificates
+                </Button>
+            </div>
+        </div>
+    ) : (
+        <div>
+            <form className="space-y-8 w-full">
+                <Button
+                    onClick={() => setWinnerDeclared(true)}
+                    disabled={loading === !success}
+                    className="w-full"
                 >
                     End Event & Declare Winners
                 </Button>
