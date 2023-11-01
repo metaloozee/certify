@@ -82,6 +82,7 @@ export const CanvasImage = ({
             ctx.fillText("TYIF", cords[1][0], cords[1][1])
             ctx.fillText("10/10/2023", cords[2][0], cords[2][1])
             ctx.fillText("Model Making", cords[3][0], cords[3][1])
+            ctx.fillText("First Runner Up", cords[4][0], cords[4][1])
         }
     }
 
@@ -146,6 +147,14 @@ export const CanvasImage = ({
                             id="event"
                         />
                         <Label htmlFor="event">Event Name</Label>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                        <RadioGroupItem
+                            onClick={() => setStatus(4)}
+                            value="postion"
+                            id="postion"
+                        />
+                        <Label htmlFor="position">Position</Label>
                     </div>
                 </RadioGroup>
 

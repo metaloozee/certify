@@ -21,32 +21,14 @@ export const EndEventForm = ({ event }: { event: EventData }) => {
     const [error, setError] = useState<string | null>(null)
     const [success, setSuccess] = useState(false)
 
-    const [winnerDeclared, setWinnerDeclared] = useState(false)
+    const [resultDeclared, setResultDeclared] = useState(false)
 
-    const [winnerCords, setWinnerCords] = useState<number[][]>([
+    const [cords, setCords] = useState<number[][]>([
         [-1, -1], // name
         [-1, -1], // class
         [-1, -1], // date
         [-1, -1], // event
-    ])
-
-    const [firstRunnerCords, setFirstRunnerCords] = useState<number[][]>([
-        [-1, -1], // name
-        [-1, -1], // class
-        [-1, -1], // date
-        [-1, -1], // event
-    ])
-    const [secondRunnerCords, setSecondRunnerCords] = useState<number[][]>([
-        [-1, -1], // name
-        [-1, -1], // class
-        [-1, -1], // date
-        [-1, -1], // event
-    ])
-    const [participantCords, setParticipantCords] = useState<number[][]>([
-        [-1, -1], // name
-        [-1, -1], // class
-        [-1, -1], // date
-        [-1, -1], // event
+        [-1, -1], // position
     ])
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -74,29 +56,17 @@ export const EndEventForm = ({ event }: { event: EventData }) => {
             setSuccess(false)
         } finally {
             setLoading(false)
-            console.log(winnerCords)
-            console.log(firstRunnerCords)
-            console.log(secondRunnerCords)
-            console.log(participantCords)
+            console.log(cords)
         }
     }
 
-    return winnerDeclared ? (
+    return resultDeclared ? (
         <div>
             <h3 className="text-xl font-bold mb-10">
                 Please upload and configure your template
             </h3>
             <div className="container max-w-xl">
-                <TemplateConfigForm
-                    winnerCords={winnerCords}
-                    firstRunnerCords={firstRunnerCords}
-                    secondRunnerCords={secondRunnerCords}
-                    participantCords={participantCords}
-                    setWinnerCords={setWinnerCords}
-                    setFirstRunnerCords={setFirstRunnerCords}
-                    setSecondRunnerCords={setSecondRunnerCords}
-                    setParticipantCords={setParticipantCords}
-                />
+                <TemplateConfigForm cords={cords} setCords={setCords} />
             </div>
             <div>
                 <Button
@@ -112,7 +82,7 @@ export const EndEventForm = ({ event }: { event: EventData }) => {
         <div>
             <form className="space-y-8 w-full">
                 <Button
-                    onClick={() => setWinnerDeclared(true)}
+                    onClick={() => setResultDeclared(true)}
                     disabled={loading === !success}
                     className="w-full"
                 >
