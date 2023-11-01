@@ -113,7 +113,6 @@ export const CanvasImage = ({
                 type="file"
                 id="template"
             />
-
             <div>
                 <RadioGroup className="flex mt-5" defaultValue="name">
                     <div className="flex items-center space-x-2">
