@@ -94,8 +94,11 @@ export const EditProfileForm = ({
     }
 
     return (
-        <div className="mt-10 container max-w-lg">
+        <div className="flex justify-center items-center h-[68vh] container max-w-lg">
             <form onSubmit={handleSubmit} className="space-y-8">
+                <h1 className="text-3xl text-center font-bold">
+                    Account Settings
+                </h1>
                 <div className="flex gap-5">
                     <div className="space-y-2 w-full">
                         <Label htmlFor="fname">First Name</Label>
