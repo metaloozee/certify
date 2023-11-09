@@ -30,7 +30,6 @@ export default async function AccountPage() {
 
     return (
         <div className="flex flex-col justify-center items-center gap-5 w-full">
-            <h1 className="text-3xl font-bold">Account Settings</h1>
             {data !== null ? (
                 <EditProfileForm session={session} data={data} />
             ) : (

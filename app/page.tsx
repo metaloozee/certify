@@ -14,7 +14,7 @@ export default async function Index() {
         <div className="flex flex-col justify-center items-center gap-10">
             <h1 className="text-3xl font-bold">Upcoming Competetions</h1>
             <div className="flex flex-wrap justify-between items-center gap-5">
-                {data.map((d) => (
+                {data.reverse().map((d) => (
                     <EventCard key={d.id} data={d} />
                 ))}
             </div>

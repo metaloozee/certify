@@ -28,22 +28,32 @@ export default async function AdminPage() {
         .eq("isopen", false)
 
     return adminData ? (
-        <div className="container max-w-xl">
+        <div className="max-w-xl">
             <Tabs defaultValue="ongoing-events" className="w-full">
-                <TabsList>
-                    <TabsTrigger value="ongoing-events">
-                        Ongoing Events
-                    </TabsTrigger>
-                    <TabsTrigger value="past-events">Past Events</TabsTrigger>
-                    <TabsTrigger value="new-event">
-                        Create New Event
-                    </TabsTrigger>
-                </TabsList>
-                <TabsContent value="ongoing-events">
+                <div className="tabs w-full flex justify-center">
+                    <TabsList className="my-5">
+                        <TabsTrigger value="ongoing-events">
+                            Ongoing Events
+                        </TabsTrigger>
+                        <TabsTrigger value="past-events">
+                            Past Events
+                        </TabsTrigger>
+                        <TabsTrigger value="new-event">
+                            Create New Event
+                        </TabsTrigger>
+                    </TabsList>
+                </div>
+
+                <TabsContent
+                    value="ongoing-events"
+                    className="flex justify-center"
+                >
                     <div className="flex flex-wrap justify-between items-center gap-5">
-                        {currentEvents?.map((d) => (
-                            <AdminOngoingEventCard key={d.id} data={d} />
-                        ))}
+                        {currentEvents
+                            ?.reverse()
+                            ?.map((d) => (
+                                <AdminOngoingEventCard key={d.id} data={d} />
+                            ))}
                     </div>
                 </TabsContent>
                 <TabsContent value="past-events">
