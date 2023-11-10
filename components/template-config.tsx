@@ -1,18 +1,17 @@
 "use client"
 
-import { ChangeEvent, useState } from "react"
+import { useState } from "react"
 
-import type { EventData } from "@/components/event-card"
 import { CanvasImage } from "@/components/template-canvas"
-
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "./ui/tabs"
 
 export const TemplateConfigForm = ({
     cords,
     setCords,
+    setTemplateFile,
 }: {
     cords: number[][]
     setCords: any
+    setTemplateFile: any
 }) => {
     const [template, setTemplate] = useState<HTMLImageElement | null>(null)
 
@@ -24,6 +23,7 @@ export const TemplateConfigForm = ({
                     setTemplate={setTemplate}
                     cords={cords}
                     setCords={setCords}
+                    setTemplateFile={setTemplateFile}
                 />
             </div>
         </div>
