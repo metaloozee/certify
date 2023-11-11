@@ -10,11 +10,13 @@ export const CanvasImage = ({
     setTemplate,
     cords,
     setCords,
+    setTemplateFile,
 }: {
     template: HTMLImageElement | null
     setTemplate: any
     cords: number[][]
     setCords: any
+    setTemplateFile: any
 }) => {
     useEffect(() => {
         const Canvas: any = document.getElementById("canvas")
@@ -41,6 +43,7 @@ export const CanvasImage = ({
         if (files) {
             const file = files[0]
             if (file) {
+                setTemplateFile(file)
                 const url = URL.createObjectURL(file)
 
                 const image = new Image()
@@ -92,7 +95,7 @@ export const CanvasImage = ({
             const ctx = canvas.getContext("2d")
 
             if (ctx) {
-                ctx.font = "30px Arial"
+                ctx.font = "25px Arial"
 
                 const rect = canvas.getBoundingClientRect()
                 const x = e.clientX - rect.left
