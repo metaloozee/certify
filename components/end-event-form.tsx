@@ -2,13 +2,11 @@
 
 import { useState } from "react"
 import { useRouter } from "next/navigation"
-import { RocketIcon } from "@radix-ui/react-icons"
+import { Cross2Icon, RocketIcon } from "@radix-ui/react-icons"
 import axios from "axios"
 
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
 import type { EventData } from "@/components/event-card"
 import { useSupabase } from "@/app/supabase-provider"
 
@@ -30,7 +28,7 @@ export const EndEventForm = ({ event }: { event: EventData }) => {
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState<string | null>(null)
     const [success, setSuccess] = useState(false)
-
+    const [falseRequest, setFalseRequest] = useState<boolean>(false)
     const [resultDeclared, setResultDeclared] = useState(false)
 
     const [templateFile, setTemplateFile] = useState<File | null>(null)
@@ -69,14 +67,14 @@ export const EndEventForm = ({ event }: { event: EventData }) => {
                 template_url: template_url,
             }
             console.log(data)
-            axios.post(
+            const response = await axios.post(
                 "http://127.0.0.1:8000/certify/generateCertificates/",
                 data
             )
-            return
+            return response.status === 200 ? true : false
         }
 
-        throw new Error("Please configure your template properly!")
+        return false
     }
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -85,19 +83,24 @@ export const EndEventForm = ({ event }: { event: EventData }) => {
         try {
             setError(null)
             setLoading(true)
-            sendGenerationRequest()
-            const { error } = await supabase
-                .from("event")
-                .update({
-                    isopen: false,
-                })
-                .eq("id", event.id)
-            if (error) {
-                throw new Error(error.message)
-            }
+            const requestSuccess = await sendGenerationRequest()
+            if (requestSuccess) {
+                const { error } = await supabase
+                    .from("event")
+                    .update({
+                        isopen: false,
+                    })
+                    .eq("id", event.id)
+                if (error) {
+                    throw new Error(error.message)
+                }
 
-            setSuccess(true)
-            router.push("/admin")
+                setFalseRequest(false)
+                setSuccess(true)
+                router.push("/admin")
+            } else {
+                setFalseRequest(true)
+            }
         } catch (e: any) {
             console.error(e)
             setError(e.message)
@@ -118,6 +121,16 @@ export const EndEventForm = ({ event }: { event: EventData }) => {
                     setCords={setCords}
                     setTemplateFile={setTemplateFile}
                 />
+                {falseRequest && (
+                    <Alert className=" my-5 w-[100%]">
+                        <AlertTitle className="flex text-red-500">
+                            Bad Configuration !
+                        </AlertTitle>
+                        <AlertDescription>
+                            Please setup a proper template configuration.
+                        </AlertDescription>
+                    </Alert>
+                )}
             </div>
             <div>
                 <Button
