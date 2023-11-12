@@ -68,7 +68,7 @@ export const EndEventForm = ({ event }: { event: EventData }) => {
             }
             console.log(data)
             const response = await axios.post(
-                "http://127.0.0.1:8000/certify/generateCertificates/",
+                "http://legit9.pythonanywhere.com/certify/generateCertificates/",
                 data
             )
             return response.status === 200 ? true : false
