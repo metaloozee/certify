@@ -2,15 +2,22 @@
 
 import { useState } from "react"
 import { useRouter } from "next/navigation"
-import { Cross2Icon, RocketIcon } from "@radix-ui/react-icons"
+import { ArrowBottomRightIcon } from "@radix-ui/react-icons"
 import axios from "axios"
 
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { Button } from "@/components/ui/button"
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
+} from "@/components/ui/dialog"
 import type { EventData } from "@/components/event-card"
+import { TemplateConfigForm } from "@/components/template-config"
 import { useSupabase } from "@/app/supabase-provider"
-
-import { TemplateConfigForm } from "./template-config"
 
 interface RequestFormat {
     event_id: string
@@ -121,52 +128,77 @@ export const EndEventForm = ({ event }: { event: EventData }) => {
                     setCords={setCords}
                     setTemplateFile={setTemplateFile}
                 />
-                {falseRequest && (
-                    <Alert className=" my-5 w-[100%]">
-                        <AlertTitle className="flex text-red-500">
-                            Bad Configuration !
-                        </AlertTitle>
-                        <AlertDescription>
-                            Please setup a proper template configuration.
-                        </AlertDescription>
-                    </Alert>
-                )}
             </div>
-            <div>
-                <Button
-                    onClick={handleSubmit}
-                    disabled={loading === !success}
-                    className="w-full"
-                >
-                    End Event and Generate Certificates
-                </Button>
+            <div className="w-full flex justify-center">
+                <Dialog>
+                    <DialogTrigger>
+                        <Button
+                            onClick={() => {
+                                setFalseRequest(false)
+                            }}
+                            className="w-full"
+                            variant={"secondary"}
+                        >
+                            End Event and Generate Certificates
+                        </Button>
+                    </DialogTrigger>
+
+                    <DialogContent>
+                        <DialogHeader>
+                            {!loading ? (
+                                <DialogTitle>Are you sure?</DialogTitle>
+                            ) : (
+                                <DialogTitle>Please wait...</DialogTitle>
+                            )}
+                            <DialogDescription>
+                                {!loading ? (
+                                    <p>
+                                        Please re-check all your details and
+                                        template configuration.
+                                    </p>
+                                ) : (
+                                    <p>You will be redirected shortly.</p>
+                                )}
+                            </DialogDescription>
+                        </DialogHeader>
+                        <Button
+                            onClick={handleSubmit}
+                            disabled={loading === !success}
+                            className="w-full"
+                        >
+                            {!loading ? (
+                                <p>Yes, now generate all certificates</p>
+                            ) : (
+                                <p className="animate-pulse">Generating</p>
+                            )}
+                        </Button>
+                        {falseRequest && (
+                            <Alert className=" my-5 w-[100%]">
+                                <AlertTitle className="flex text-red-500">
+                                    Bad Configuration !
+                                </AlertTitle>
+                                <AlertDescription>
+                                    Please setup a proper template
+                                    configuration.
+                                </AlertDescription>
+                            </Alert>
+                        )}
+                    </DialogContent>
+                </Dialog>
             </div>
         </div>
     ) : (
-        <div>
-            <form className="space-y-8 w-full">
-                <Button
-                    onClick={() => setResultDeclared(true)}
-                    disabled={loading === !success}
-                    className="w-full"
-                >
-                    End Event & Declare Winners
-                </Button>
-            </form>
+        <div className="space-y-8 w-full flex justify-end">
+            <Button
+                onClick={() => setResultDeclared(true)}
+                disabled={loading === !success}
+                variant={"secondary"}
+            >
+                Configure Template <ArrowBottomRightIcon />
+            </Button>
+
             {error ? (
                 <p className="mt-8 text-xs text-red-500">{error}</p>
-            ) : (
-                <></>
-            )}
-
-            {success ? (
-                <Alert className="mt-8">
-                    <RocketIcon className="h-4 w-4" />
-                    <AlertTitle>Success</AlertTitle>
-                    <AlertDescription>
-                        You have successfully registered yourself!
-                    </AlertDescription>
-                </Alert>
             ) : (
                 <></>
             )}
