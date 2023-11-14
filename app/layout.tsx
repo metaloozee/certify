@@ -28,8 +28,9 @@ export default function RootLayout({
                             <div className="flex m-10 items-center justify-center">
                                 {children}
                             </div>
-                            <Toaster />
-                            {/* <Footer /> */}
+                            <div className="w-full fixed bottom-0 text-center">
+                                <Footer />
+                            </div>
                         </div>
                     </ThemeProvider>
                 </SupabaseProvider>
