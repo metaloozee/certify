@@ -20,6 +20,6 @@ export default async function Index() {
             </div>
         </div>
     ) : (
-        <h1>No Upcoming Competetions</h1>
+        <h1 className="text-3xl font-bold">No Upcoming Competetions</h1>
     )
 }
