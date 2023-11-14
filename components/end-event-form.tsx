@@ -84,6 +84,38 @@ export const EndEventForm = ({ event }: { event: EventData }) => {
         return false
     }
 
+    const downloadCertificates = async () => {
+        console.log("Downloading Certificates!")
+        const { data, error } = await supabase.storage
+            .from("certificates")
+            .download(`${event.id}.zip`)
+
+        if (data) {
+            const blob = data.slice(0, data.size, "application/zip")
+            const blobUrl = URL.createObjectURL(blob)
+            const link = document.createElement("a")
+            link.href = blobUrl
+            link.download = `${event.name}-${event.date}`
+
+            document.body.appendChild(link)
+            link.dispatchEvent(
+                new MouseEvent("click", {
+                    bubbles: true,
+                    cancelable: true,
+                    view: window,
+                })
+            )
+
+            document.body.removeChild(link)
+
+            router.push("/")
+        }
+
+        if (error) {
+            console.log(error.message)
+        }
+    }
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
 
@@ -104,7 +136,6 @@ export const EndEventForm = ({ event }: { event: EventData }) => {
 
                 setFalseRequest(false)
                 setSuccess(true)
-                router.push("/admin")
             } else {
                 setFalseRequest(true)
             }
@@ -146,28 +177,45 @@ export const EndEventForm = ({ event }: { event: EventData }) => {
                     <DialogContent>
                         <DialogHeader>
                             {!loading ? (
-                                <DialogTitle>Are you sure?</DialogTitle>
+                                !success ? (
+                                    <DialogTitle>Are you sure?</DialogTitle>
+                                ) : (
+                                    <DialogTitle>Event Ended</DialogTitle>
+                                )
                             ) : (
                                 <DialogTitle>Please wait...</DialogTitle>
                             )}
                             <DialogDescription>
                                 {!loading ? (
-                                    <p>
-                                        Please re-check all your details and
-                                        template configuration.
-                                    </p>
+                                    !success ? (
+                                        <p>
+                                            Please re-check all your details and
+                                            template configuration.
+                                        </p>
+                                    ) : (
+                                        <p>
+                                            Certificates will be download as a
+                                            zip file.
+                                        </p>
+                                    )
                                 ) : (
                                     <p>You will be redirected shortly.</p>
                                 )}
                             </DialogDescription>
                         </DialogHeader>
                         <Button
-                            onClick={handleSubmit}
-                            disabled={loading === !success}
+                            onClick={
+                                !success ? handleSubmit : downloadCertificates
+                            }
+                            disabled={loading}
                             className="w-full"
                         >
                             {!loading ? (
-                                <p>Yes, now generate all certificates</p>
+                                !success ? (
+                                    <p>Yes, now generate all certificates</p>
+                                ) : (
+                                    <p>Download</p>
+                                )
                             ) : (
                                 <p className="animate-pulse">Generating</p>
                             )}
