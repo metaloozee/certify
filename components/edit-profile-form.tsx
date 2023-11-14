@@ -61,11 +61,19 @@ export const EditProfileForm = ({
             setLoading(true)
 
             if (
-                (fname && fname.length > 0) ||
-                (lname && lname.length > 0) ||
-                (enroll && enroll.length > 0)
+                fname &&
+                fname.length > 0 &&
+                fname.trim() !== "" &&
+                lname &&
+                lname.length > 0 &&
+                lname.trim() !== "" &&
+                enroll &&
+                enroll.length > 0 &&
+                enroll.trim() !== ""
             ) {
                 // Adding the user
+                console.log(lname.trim())
+
                 const { error } = await supabase
                     .from("student")
                     .update({
@@ -198,25 +206,24 @@ export const EditProfileForm = ({
                 >
                     Submit
                 </Button>
+                {error ? (
+                    <p className="mt-8 text-xs text-red-500">{error}</p>
+                ) : (
+                    <></>
+                )}
+
+                {success ? (
+                    <Alert className="mt-8">
+                        <RocketIcon className="h-4 w-4" />
+                        <AlertTitle>Success</AlertTitle>
+                        <AlertDescription>
+                            Student profile updated successfully!
+                        </AlertDescription>
+                    </Alert>
+                ) : (
+                    <></>
+                )}
             </form>
-
-            {error ? (
-                <p className="mt-8 text-xs text-red-500">{error}</p>
-            ) : (
-                <></>
-            )}
-
-            {success ? (
-                <Alert className="mt-8">
-                    <RocketIcon className="h-4 w-4" />
-                    <AlertTitle>Success</AlertTitle>
-                    <AlertDescription>
-                        Student profile updated successfully!
-                    </AlertDescription>
-                </Alert>
-            ) : (
-                <></>
-            )}
         </div>
     )
 }
