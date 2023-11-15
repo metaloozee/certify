@@ -12,7 +12,7 @@ export default async function Index() {
 
     return data && data.length > 0 ? (
         <div className="flex flex-col justify-center items-center gap-10">
-            <h1 className="text-center text-lg md:text-3xl font-bold">
+            <h1 className="text-center text-2xl md:text-3xl font-light">
                 Upcoming Competetions
             </h1>
             <div className="container grid grid-cols-1 md:grid-cols-3 gap-5">
