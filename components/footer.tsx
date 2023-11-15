@@ -2,7 +2,7 @@ import Link from "next/link"
 
 export const Footer = () => {
     return (
-        <div className="bg-slate-900/50 w-full md:max-w-sm md:rounded-full md:mb-2 px-6 py-4 backdrop:blur backdrop-blur-md">
+        <div className="bg-slate-200/50 dark:bg-slate-900/50 w-full md:max-w-sm md:rounded-full md:mb-2 px-6 py-4 backdrop:blur backdrop-blur-md">
             <p className="text-center text-slate-500 text-xs">
                 Made with ❤️ by{" "}
                 <Link
