@@ -20,7 +20,13 @@ export type EventData = {
     team_limit: number
 }
 
-export const EventCard = async ({ data }: { data: EventData }) => {
+export const EventCard = async ({
+    data,
+    status,
+}: {
+    data: EventData
+    status: boolean
+}) => {
     let eventDate = new Date(data.date ?? "")
     let now = new Date()
     let timeRemaining = eventDate.getTime() - now.getTime()
@@ -43,11 +49,17 @@ export const EventCard = async ({ data }: { data: EventData }) => {
                 </p>
             </CardContent>
             <CardFooter>
-                <Button className="w-full" asChild>
-                    <Link className="w-full" href={`/event/${data.id}`}>
-                        Register
-                    </Link>
-                </Button>
+                {status === false ? (
+                    <Button className="w-full">
+                        <Link className="w-full" href={`/event/${data.id}`}>
+                            Register
+                        </Link>
+                    </Button>
+                ) : (
+                    <Button disabled className="w-full">
+                        Already participated
+                    </Button>
+                )}
             </CardFooter>
         </Card>
     )
