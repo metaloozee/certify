@@ -20,7 +20,7 @@ export default function RootLayout({
 }) {
     return (
         <html lang="en">
-            <body>
+            <body className="">
                 <SupabaseProvider>
                     <ThemeProvider attribute="class" defaultTheme="dark">
                         <div className="relative flex min-h-screen flex-col">
