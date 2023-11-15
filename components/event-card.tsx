@@ -90,7 +90,7 @@ export const AdminOngoingEventCard = async ({ data }: { data: EventData }) => {
     )
 
     return (
-        <Card className="max-w-md">
+        <Card className="w-full  flex flex-col justify-between">
             <CardHeader>
                 <CardTitle>{data.name}</CardTitle>
                 <CardDescription>{data.description}</CardDescription>
@@ -114,7 +114,7 @@ export const AdminOngoingEventCard = async ({ data }: { data: EventData }) => {
 
 export const AdminEndedEventCard = async ({ data }: { data: EventData }) => {
     return (
-        <Card className="max-w-md">
+        <Card className="w-full flex flex-col justify-between">
             <CardHeader>
                 <CardTitle>{data.name}</CardTitle>
                 <CardDescription>{data.description}</CardDescription>
