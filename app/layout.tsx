@@ -1,5 +1,7 @@
 import "./globals.css"
 
+import { GeistSans } from "geist/font/sans"
+
 import { Toaster } from "@/components/ui/toaster"
 import { Footer } from "@/components/footer"
 import { Navbar } from "@/components/navbar"
@@ -19,8 +21,8 @@ export default function RootLayout({
     children: React.ReactNode
 }) {
     return (
-        <html lang="en">
-            <body className="">
+        <html lang="en" className={GeistSans.className}>
+            <body>
                 <SupabaseProvider>
                     <ThemeProvider attribute="class" defaultTheme="dark">
                         <div className="relative flex min-h-screen flex-col">

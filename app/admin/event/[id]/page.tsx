@@ -62,7 +62,7 @@ export default async function AdminEventPage({ params }: { params: any }) {
                             </div>
                         </div>
 
-                        <p className="text-neutral-500 max-w-xl">
+                        <p className="text-slate-500 max-w-xl">
                             {eventData.description}
                         </p>
                     </div>
