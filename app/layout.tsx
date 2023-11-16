@@ -20,15 +20,15 @@ export default function RootLayout({
 }) {
     return (
         <html lang="en">
-            <body>
+            <body className="">
                 <SupabaseProvider>
                     <ThemeProvider attribute="class" defaultTheme="dark">
                         <div className="relative flex min-h-screen flex-col">
                             <Navbar />
-                            <div className="flex m-10 items-center justify-center">
+                            <div className="flex my-10 md:mt-10 md:mb-20 items-center justify-center">
                                 {children}
                             </div>
-                            <div className="w-full fixed bottom-0 text-center">
+                            <div className="md:fixed flex justify-center items-center bottom-0 right-0 left-0 text-center">
                                 <Footer />
                             </div>
                         </div>

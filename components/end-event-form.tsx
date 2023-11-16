@@ -150,10 +150,10 @@ export const EndEventForm = ({ event }: { event: EventData }) => {
 
     return resultDeclared ? (
         <div>
-            <h3 className="text-xl font-bold mb-10">
-                Please upload and configure your template
-            </h3>
-            <div className="container max-w-xl">
+            <div className="container ">
+                <h3 className="text-xl font-light mb-10">
+                    Please upload and configure your template:
+                </h3>
                 <TemplateConfigForm
                     cords={cords}
                     setCords={setCords}
