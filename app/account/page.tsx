@@ -1,7 +1,6 @@
 import Link from "next/link"
 
 import { EditProfileForm } from "@/components/edit-profile-form"
-import { OnboardingForm } from "@/components/onboard-form"
 import { createServerSupabaseClient } from "@/app/supabase-server"
 
 export default async function AccountPage() {

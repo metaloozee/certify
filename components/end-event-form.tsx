@@ -17,6 +17,7 @@ import {
 } from "@/components/ui/dialog"
 import type { EventData } from "@/components/event-card"
 import { TemplateConfigForm } from "@/components/template-config"
+import { downloadCertificates } from "@/components/utils"
 import { useSupabase } from "@/app/supabase-provider"
 
 interface RequestFormat {
@@ -84,36 +85,9 @@ export const EndEventForm = ({ event }: { event: EventData }) => {
         return false
     }
 
-    const downloadCertificates = async () => {
-        console.log("Downloading Certificates!")
-        const { data, error } = await supabase.storage
-            .from("certificates")
-            .download(`${event.id}.zip`)
-
-        if (data) {
-            const blob = data.slice(0, data.size, "application/zip")
-            const blobUrl = URL.createObjectURL(blob)
-            const link = document.createElement("a")
-            link.href = blobUrl
-            link.download = `${event.name}-${event.date}`
-
-            document.body.appendChild(link)
-            link.dispatchEvent(
-                new MouseEvent("click", {
-                    bubbles: true,
-                    cancelable: true,
-                    view: window,
-                })
-            )
-
-            document.body.removeChild(link)
-
-            router.push("/")
-        }
-
-        if (error) {
-            console.log(error.message)
-        }
+    const handleGenerate = async () => {
+        await downloadCertificates(supabase, event)
+        router.push("/")
     }
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -204,9 +178,7 @@ export const EndEventForm = ({ event }: { event: EventData }) => {
                             </DialogDescription>
                         </DialogHeader>
                         <Button
-                            onClick={
-                                !success ? handleSubmit : downloadCertificates
-                            }
+                            onClick={!success ? handleSubmit : handleGenerate}
                             disabled={loading}
                             className="w-full"
                         >
