@@ -33,6 +33,7 @@ export default function RootLayout({
                             <div className="md:fixed flex justify-center items-center bottom-0 right-0 left-0 text-center">
                                 <Footer />
                             </div>
+                            <Toaster />
                         </div>
                     </ThemeProvider>
                 </SupabaseProvider>
