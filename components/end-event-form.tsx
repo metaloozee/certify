@@ -4,6 +4,7 @@ import { useState } from "react"
 import { useRouter } from "next/navigation"
 import { ArrowBottomRightIcon } from "@radix-ui/react-icons"
 import axios from "axios"
+import { Loader2 } from "lucide-react"
 
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { Button } from "@/components/ui/button"
@@ -189,7 +190,10 @@ export const EndEventForm = ({ event }: { event: EventData }) => {
                                     <p>Download</p>
                                 )
                             ) : (
-                                <p className="animate-pulse">Generating</p>
+                                <p className="animate-pulse flex">
+                                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                    Generating
+                                </p>
                             )}
                         </Button>
                         {falseRequest && (
