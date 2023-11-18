@@ -111,25 +111,3 @@ export const AdminOngoingEventCard = async ({ data }: { data: EventData }) => {
         </Card>
     )
 }
-
-export const AdminEndedEventCard = async ({ data }: { data: EventData }) => {
-    return (
-        <Card className="w-full flex flex-col justify-between">
-            <CardHeader>
-                <CardTitle>{data.name}</CardTitle>
-                <CardDescription>{data.description}</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-2">
-                <Badge>MAX MEMBERS: {data.team_limit}</Badge>
-                <p className="text-sm text-green-500">
-                    {new Date(data.date ?? "").toDateString()}
-                </p>
-            </CardContent>
-            <CardFooter>
-                <Link className="w-full" href={`/admin/event/${data.id}`}>
-                    <Button className="w-full">Manage Event</Button>
-                </Link>
-            </CardFooter>
-        </Card>
-    )
-}

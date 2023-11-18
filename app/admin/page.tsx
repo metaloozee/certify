@@ -1,8 +1,6 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import {
-    AdminEndedEventCard,
-    AdminOngoingEventCard,
-} from "@/components/event-card"
+import { AdminEndedEventCard } from "@/components/admin-ended-card"
+import { AdminOngoingEventCard } from "@/components/event-card"
 import { AdminEventForm } from "@/components/event-form"
 import { createServerSupabaseClient } from "@/app/supabase-server"
 
