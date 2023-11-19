@@ -310,17 +310,20 @@ export const AdminEventForm = ({ session }: { session: Session | null }) => {
                 (eventDescription && eventDescription.length > 0) ||
                 startDate
             ) {
-                const { error } = await supabase.from("event").insert({
-                    name: eventName,
-                    description: eventDescription,
-                    isopen: true,
-                    date: startDate?.toDateString() ?? Date.now().toString(),
-                    team_limit: memberLimit,
-                })
+                const { data: insertResult, error } = await supabase
+                    .from("event")
+                    .insert({
+                        name: eventName,
+                        description: eventDescription,
+                        isopen: true,
+                        date:
+                            startDate?.toDateString() ?? Date.now().toString(),
+                        team_limit: memberLimit,
+                    })
+
                 if (error) {
                     throw new Error(error.message)
                 }
-
                 setSuccess(true)
             } else {
                 throw new Error("Please enter valid inputs")

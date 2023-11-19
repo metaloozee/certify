@@ -74,7 +74,7 @@ export default async function AdminEventPage({ params }: { params: any }) {
                 </div>
 
                 <div className="mt-16">
-                    <DataTable data={eventParticipantData} />
+                    <DataTable data={eventParticipantData} />;
                 </div>
 
                 <div className="mt-10">

@@ -70,7 +70,6 @@ export const columns: ColumnDef<EventParticipantData>[] = [
         accessorKey: "group.name",
         header: "Group Name",
     },
-
     {
         accessorKey: "group.groupmember",
         header: "Group Members",
@@ -113,84 +112,167 @@ export const columns: ColumnDef<EventParticipantData>[] = [
 
             const handleSubmit = async (e: React.FormEvent) => {
                 e.preventDefault()
-
+                const id = row.original.event_id
+                const branchCode =
+                    row.original.group?.groupmember[0]?.student?.class?.slice(
+                        -2
+                    )
+                var element
                 try {
                     setLoading(true)
+                    const { data: eData } = await supabase
+                        .from("eventresult")
+                        .select("winner, runner_up, second_runner_up")
+                        .eq("branch", branchCode)
+                    console.log(eData)
+                    if (
+                        eData !== null &&
+                        eData !== undefined &&
+                        eData.length > 0
+                    ) {
+                        for (let i = 0; i < eData.length; i++) {
+                            element = eData[i]
+                        }
+                    }
                     if (position === "winner") {
-                        const { error } = await supabase
-                            .from("event")
-                            .update({ winner: row.original.group?.id })
-                            .eq("id", row.original.event_id ?? "")
-
-                        if (error) {
-                            throw new Error(error.message)
+                        if (
+                            element?.winner == null ||
+                            element.winner == undefined
+                        ) {
+                            if (
+                                element?.second_runner_up ==
+                                    row.original.group?.id ||
+                                element?.runner_up == row.original.group?.id ||
+                                element?.winner == row.original.group?.id
+                            ) {
+                                return toast({
+                                    title: "uh oh!",
+                                    description: `Cant select Multiple 'winners' from same branch`,
+                                })
+                            } else {
+                                const { error } = await supabase
+                                    .from("eventresult")
+                                    .insert({
+                                        event_id: id,
+                                        winner: row.original.group?.id,
+                                        branch: branchCode,
+                                    })
+                                if (error) {
+                                    throw new Error(error.message)
+                                }
+                            }
+                        } else {
+                            return toast({
+                                title: "uh oh!",
+                                description: `Cant select Multiple 'winners' from same branch`,
+                            })
                         }
                     } else if (position === "runnerup") {
-                        const { error } = await supabase
-                            .from("event")
-                            .update({ runner_up: row.original.group?.id })
-                            .eq("id", row.original.event_id ?? "")
-
-                        if (error) {
-                            throw new Error(error.message)
+                        if (
+                            element?.runner_up == null ||
+                            element.runner_up == undefined
+                        ) {
+                            if (
+                                element?.second_runner_up ==
+                                    row.original.group?.id ||
+                                element?.winner == row.original.group?.id ||
+                                element?.runner_up == row.original.group?.id
+                            ) {
+                                return toast({
+                                    title: "uh oh!",
+                                    description: `Cant select Multiple 'Runner ups' from same branch`,
+                                })
+                            } else {
+                                const { error } = await supabase
+                                    .from("eventresult")
+                                    .insert({
+                                        event_id: id,
+                                        runner_up: row.original.group?.id,
+                                        branch: branchCode,
+                                    })
+                                if (error) {
+                                    throw new Error(error.message)
+                                }
+                            }
+                        } else {
+                            return toast({
+                                title: "uh oh!",
+                                description: `Cant select Multiple 'Runner ups' from same branch`,
+                            })
                         }
                     } else if (position === "secondrunnerup") {
-                        const { error } = await supabase
-                            .from("event")
-                            .update({
-                                second_runner_up: row.original.group?.id,
-                            })
-                            .eq("id", row.original.event_id ?? "")
+                        for (let i = 0; i < eData!.length; i++) {
+                            element = eData![i]
+                        }
+                        if (
+                            element?.second_runner_up == null ||
+                            element.second_runner_up == undefined
+                        ) {
+                            if (
+                                element?.runner_up == row.original.group?.id ||
+                                element?.winner == row.original.group?.id ||
+                                element?.second_runner_up ==
+                                    row.original.group?.id
+                            ) {
+                                return toast({
+                                    title: "uh oh!",
+                                    description: `Cant select Multiple 'Second Runner ups' from same branch`,
+                                })
+                            } else {
+                                const { error } = await supabase
+                                    .from("eventresult")
+                                    .insert({
+                                        event_id: id,
+                                        second_runner_up:
+                                            row.original.group?.id,
+                                        branch: branchCode,
+                                    })
 
-                        if (error) {
-                            throw new Error(error.message)
+                                if (error) {
+                                    throw new Error(error.message)
+                                }
+                            }
+                        } else {
+                            return toast({
+                                title: "uh oh!",
+                                description: `Cant select Multiple ' Second Runner ups' from same branch`,
+                            })
                         }
                     } else if (position === "participant") {
-                        const { data: eventData } = await supabase
-                            .from("event")
-                            .select("winner, runner_up, second_runner_up")
-                            .eq("id", row.original.event_id ?? "")
-                            .single()
-
-                        if (
-                            eventData?.winner === null &&
-                            eventData.runner_up === null &&
-                            eventData.second_runner_up === null
-                        ) {
-                            return toast({
-                                title: "Data Updated!",
-                                description: `Successfully updated the group's position as ${position}`,
-                            })
+                        console.log(element?.winner)
+                        for (let i = 0; i < eData!.length; i++) {
+                            element = eData![i]
                         }
-
-                        if (eventData?.winner === row.original.group?.id) {
+                        if (element?.winner === row.original.group?.id) {
                             const { error } = await supabase
-                                .from("event")
-                                .update({ winner: null })
-                                .eq("id", row.original.event_id ?? "")
-
-                            if (error) {
-                                throw new Error(error.message)
-                            }
-                        } else if (
-                            eventData?.runner_up === row.original.group?.id
-                        ) {
-                            const { error } = await supabase
-                                .from("event")
-                                .update({ runner_up: null })
-                                .eq("id", row.original.event_id ?? "")
+                                .from("eventresult")
+                                .delete()
+                                .eq("winner", row.original.group?.id ?? "")
 
                             if (error) {
                                 throw new Error(error.message)
                             }
                         } else if (
-                            eventData?.second_runner_up ===
-                            row.original.group?.id
+                            element?.runner_up === row.original.group?.id
                         ) {
                             const { error } = await supabase
-                                .from("event")
-                                .update({ second_runner_up: null })
-                                .eq("id", row.original.event_id ?? "")
+                                .from("eventresult")
+                                .delete()
+                                .eq("runner_up", row.original.group?.id ?? "")
+
+                            if (error) {
+                                throw new Error(error.message)
+                            }
+                        } else if (
+                            element?.second_runner_up === row.original.group?.id
+                        ) {
+                            const { error } = await supabase
+                                .from("eventresult")
+                                .delete()
+                                .eq(
+                                    "second_runner_up",
+                                    row.original.group?.id ?? ""
+                                )
 
                             if (error) {
                                 throw new Error(error.message)
@@ -273,6 +355,24 @@ export const columns: ColumnDef<EventParticipantData>[] = [
                 >
                     <TrashIcon className="text-red-500 h-4 w-4" />
                 </Button>
+            )
+        },
+    },
+    {
+        accessorKey: "branch",
+        header: "Branch",
+        cell: ({ row }) => {
+            const members = row.original.group?.groupmember || []
+            return (
+                <div className="space-y-2">
+                    {members.map((member, index) => (
+                        <div key={index}>
+                            {row.original.group?.groupmember[0]?.student?.class?.slice(
+                                -2
+                            )}
+                        </div>
+                    ))}
+                </div>
             )
         },
     },
@@ -389,7 +489,7 @@ export const DataTable = ({ data }: DataTableProps) => {
                         ) : (
                             <TableRow>
                                 <TableCell
-                                    colSpan={columns.length}
+                                    colSpan={columns.length + 1}
                                     className="h-24 text-center"
                                 >
                                     No results.
