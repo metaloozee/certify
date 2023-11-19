@@ -1,6 +1,6 @@
 import { SupabaseClient } from "@supabase/supabase-js"
 
-import { EventData } from "./event-card"
+import type { EventData } from "@/components/event-card"
 
 export const downloadCertificates = async (
     supabaseContext: SupabaseClient,

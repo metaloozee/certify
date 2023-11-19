@@ -1,9 +1,8 @@
 import { ChangeEvent, useEffect, useState } from "react"
 
+import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
-
-import { Input } from "./ui/input"
 
 export const CanvasImage = ({
     template,

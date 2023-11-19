@@ -1,9 +1,5 @@
-import Link from "next/link"
-
-import type { Database } from "@/types/supabase"
 import { EventCard } from "@/components/event-card"
-
-import { createServerSupabaseClient } from "./supabase-server"
+import { createServerSupabaseClient } from "@/app/supabase-server"
 
 export default async function Index() {
     const supabase = await createServerSupabaseClient()
