@@ -28,6 +28,7 @@ export default function RootLayout({
                             <div className="flex my-10 md:mt-10 md:mb-20 items-center justify-center">
                                 {children}
                             </div>
+                            <Toaster />
                             <div className="md:fixed flex justify-center items-center bottom-0 right-0 left-0 text-center">
                                 <Footer />
                             </div>

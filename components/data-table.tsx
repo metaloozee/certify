@@ -63,7 +63,6 @@ export type EventParticipantData = {
             } | null
         }[]
     } | null
-    branch: string
 }
 
 export const columns: ColumnDef<EventParticipantData>[] = [
@@ -360,7 +359,7 @@ export const columns: ColumnDef<EventParticipantData>[] = [
         },
     },
     {
-        accessorKey: "Branch",
+        accessorKey: "branch",
         header: "Branch",
         cell: ({ row }) => {
             const members = row.original.group?.groupmember || []
@@ -402,16 +401,6 @@ export const DataTable = ({ data }: DataTableProps) => {
             columnVisibility,
         },
     })
-    const [selectedPositions, setSelectedPositions] = useState<
-        Record<string, string>
-    >({})
-
-    const updateSelectedPosition = (branch: string, position: string) => {
-        setSelectedPositions((prevSelected) => ({
-            ...prevSelected,
-            [branch]: position,
-        }))
-    }
 
     return (
         <div>
