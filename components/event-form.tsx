@@ -141,6 +141,17 @@ export const EventForm = ({
                 throw new Error(groupDataError.message)
             }
 
+            // leader's data
+            const { data: leaderData, error: leaderDataError } = await supabase
+                .from("student")
+                .select("*")
+                .eq("id", session?.user.id ?? "")
+                .maybeSingle()
+
+            if (leaderDataError) {
+                throw new Error(leaderDataError.message)
+            }
+
             // Adding the leader
             const { error: memberGroupError } = await supabase
                 .from("groupmember")
@@ -163,9 +174,18 @@ export const EventForm = ({
                 const { data: studentData, error: studentDataError } =
                     await supabase
                         .from("student")
-                        .select("id")
+                        .select("id, class")
                         .eq("enrollment", enrollmentNumber)
                         .maybeSingle()
+
+                console.log(studentData?.class?.slice(2))
+                if (
+                    studentData?.class?.slice(2) !== leaderData?.class?.slice(2)
+                ) {
+                    throw new Error(
+                        "Not all of the teammates you listed are from the same branch as you."
+                    )
+                }
 
                 if (studentDataError || !studentData) {
                     throw new Error(

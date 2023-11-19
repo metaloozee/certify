@@ -69,7 +69,12 @@ export default async function EventPage({ params }: { params: any }) {
 
     return (
         <div className="flex flex-col justify-center items-center gap-5 w-full">
-            <h1 className="text-3xl font-bold">{event.name}</h1>
+            <div className="container space-y-2 text-center">
+                <h1 className="text-2xl md:text-3xl font-bold">{event.name}</h1>
+                <p className="text-slate-500 text-xs md:text-lg">
+                    {event.description}
+                </p>
+            </div>
             <EventForm session={session} event={event} user={user} />
         </div>
     )

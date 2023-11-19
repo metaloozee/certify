@@ -8,13 +8,17 @@ export const Footer = () => {
                 <Link
                     className="underline"
                     href={"https://github.com/Anshsingh99"}
+                    target="_blank"
+                    rel="noopener noreferrer"
                 >
                     Ansh Singh
                 </Link>
                 ,{" "}
                 <Link
                     className="underline"
-                    href={"https://instagram.com/ayannparkar"}
+                    href={"https://github.com/metaloozee"}
+                    target="_blank"
+                    rel="noopener noreferrer"
                 >
                     Ayan Parkar
                 </Link>{" "}
@@ -22,6 +26,8 @@ export const Footer = () => {
                 <Link
                     className="underline"
                     href={"https://github.com/legit-programmer"}
+                    target="_blank"
+                    rel="noopener noreferrer"
                 >
                     Siddique Khan
                 </Link>

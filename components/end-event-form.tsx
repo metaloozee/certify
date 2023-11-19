@@ -4,6 +4,7 @@ import { useState } from "react"
 import { useRouter } from "next/navigation"
 import { ArrowBottomRightIcon } from "@radix-ui/react-icons"
 import axios from "axios"
+import { Loader2 } from "lucide-react"
 
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { Button } from "@/components/ui/button"
@@ -17,6 +18,7 @@ import {
 } from "@/components/ui/dialog"
 import type { EventData } from "@/components/event-card"
 import { TemplateConfigForm } from "@/components/template-config"
+import { downloadCertificates } from "@/components/utils"
 import { useSupabase } from "@/app/supabase-provider"
 
 interface RequestFormat {
@@ -84,36 +86,9 @@ export const EndEventForm = ({ event }: { event: EventData }) => {
         return false
     }
 
-    const downloadCertificates = async () => {
-        console.log("Downloading Certificates!")
-        const { data, error } = await supabase.storage
-            .from("certificates")
-            .download(`${event.id}.zip`)
-
-        if (data) {
-            const blob = data.slice(0, data.size, "application/zip")
-            const blobUrl = URL.createObjectURL(blob)
-            const link = document.createElement("a")
-            link.href = blobUrl
-            link.download = `${event.name}-${event.date}`
-
-            document.body.appendChild(link)
-            link.dispatchEvent(
-                new MouseEvent("click", {
-                    bubbles: true,
-                    cancelable: true,
-                    view: window,
-                })
-            )
-
-            document.body.removeChild(link)
-
-            router.push("/")
-        }
-
-        if (error) {
-            console.log(error.message)
-        }
+    const handleGenerate = async () => {
+        await downloadCertificates(supabase, event)
+        router.push("/")
     }
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -204,9 +179,7 @@ export const EndEventForm = ({ event }: { event: EventData }) => {
                             </DialogDescription>
                         </DialogHeader>
                         <Button
-                            onClick={
-                                !success ? handleSubmit : downloadCertificates
-                            }
+                            onClick={!success ? handleSubmit : handleGenerate}
                             disabled={loading}
                             className="w-full"
                         >
@@ -217,7 +190,10 @@ export const EndEventForm = ({ event }: { event: EventData }) => {
                                     <p>Download</p>
                                 )
                             ) : (
-                                <p className="animate-pulse">Generating</p>
+                                <p className="animate-pulse flex">
+                                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                    Generating
+                                </p>
                             )}
                         </Button>
                         {falseRequest && (
