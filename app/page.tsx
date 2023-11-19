@@ -1,10 +1,13 @@
-import { EventCard } from "@/components/event-card-home"
+import Link from "next/link"
+
+import type { Database } from "@/types/supabase"
+import { EventCard } from "@/components/event-card"
 
 import { createServerSupabaseClient } from "./supabase-server"
 
 export default async function Index() {
     const supabase = await createServerSupabaseClient()
-    const { data: session } = await supabase.auth.getSession()
+
     const { data } = await supabase.from("event").select("*").eq("isopen", true)
 
     return data && data.length > 0 ? (
@@ -14,11 +17,7 @@ export default async function Index() {
             </h1>
             <div className="container grid grid-cols-1 md:grid-cols-3 gap-5">
                 {data.reverse().map((d) => (
-                    <EventCard
-                        key={d.id}
-                        eventdata={d}
-                        session={session.session}
-                    />
+                    <EventCard key={d.id} data={d} />
                 ))}
             </div>
         </div>
