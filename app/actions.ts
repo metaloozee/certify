@@ -16,7 +16,7 @@ export default async function fetchGroups(eventdata: EventData) {
         .eq("group.groupmember.student_id", session?.user.id ?? "")
         .eq("event_id", eventdata?.id ?? "")
 
-    if (data) {
+    if (data && data.length > 0) {
         const group_id = data[0].group?.id
         if (group_id) {
             const { data: members } = await supabase

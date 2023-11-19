@@ -1,6 +1,3 @@
-import Link from "next/link"
-
-import type { Database } from "@/types/supabase"
 import { EventCard } from "@/components/event-card-home"
 
 import { createServerSupabaseClient } from "./supabase-server"
