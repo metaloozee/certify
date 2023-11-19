@@ -44,7 +44,7 @@ import {
     TableRow,
 } from "@/components/ui/table"
 import { ToastAction } from "@/components/ui/toast"
-import { useToast } from "@/components/ui/use-toast"
+import { toast, useToast } from "@/components/ui/use-toast"
 import { useSupabase } from "@/app/supabase-provider"
 
 export type EventParticipantData = {
@@ -124,7 +124,8 @@ export const columns: ColumnDef<EventParticipantData>[] = [
                         .from("eventresult")
                         .select("winner, runner_up, second_runner_up")
                         .eq("branch", branchCode)
-                    console.log(eData)
+                        .eq("event_id", id)
+
                     if (
                         eData !== null &&
                         eData !== undefined &&
@@ -344,6 +345,29 @@ export const columns: ColumnDef<EventParticipantData>[] = [
             return (
                 <Button
                     onClick={async () => {
+                        try {
+                            const { error } = await supabase
+                                .from("group")
+                                .delete()
+                                .eq("id", row.original.group?.id ?? "")
+
+                            if (error) {
+                                throw new Error(error.message)
+                            }
+
+                            await router.refresh()
+
+                            return toast({
+                                title: "Data Deleted!",
+                                description: `Successfully deleted the group.`,
+                            })
+                        } catch (e: any) {
+                            console.error(e)
+                            toast({
+                                title: "Uh Oh!",
+                                description: `You cannot delete a group which has already been alloted a position, change back its position to participant to do so.`,
+                            })
+                        }
                         await supabase
                             .from("group")
                             .delete()
