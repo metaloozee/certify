@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useState } from "react"
+import React, { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import { ReloadIcon } from "@radix-ui/react-icons"
 import {
@@ -14,6 +14,7 @@ import {
     VisibilityState,
 } from "@tanstack/react-table"
 import { MoreHorizontal, Save, TrashIcon } from "lucide-react"
+import { string } from "zod"
 
 import { Button } from "@/components/ui/button"
 import {
@@ -107,6 +108,49 @@ export const columns: ColumnDef<EventParticipantData>[] = [
             const { toast } = useToast()
             const { supabase } = useSupabase()
 
+            const [defaultPosition, setDefaultPosition] =
+                useState<string>("Participant")
+            useEffect(() => {
+                const fetchPosition = async () => {
+                    try {
+                        const { data, error } = await supabase
+                            .from("eventresult")
+                            .select("*")
+                            .eq("event_id", row.original.event_id ?? "")
+                            .eq(
+                                "branch",
+                                row.original.group?.groupmember[0].student?.class?.slice(
+                                    -2
+                                ) ?? ""
+                            )
+                            .maybeSingle()
+
+                        if (error) {
+                            throw new Error(error.message)
+                        }
+
+                        console.log(data)
+                        if (data?.winner == row.original.group?.id) {
+                            return setDefaultPosition("Winner")
+                        } else if (data?.runner_up == row.original.group?.id) {
+                            return setDefaultPosition("Runner Up")
+                        } else if (
+                            data?.second_runner_up == row.original.group?.id
+                        ) {
+                            return setDefaultPosition("Second Runner Up")
+                        } else {
+                            return setDefaultPosition("Participant")
+                        }
+                    } catch (error) {
+                        console.error("Error fetching position:", error)
+                        setDefaultPosition("participant")
+                    }
+                }
+
+                fetchPosition()
+            }, [])
+
+            console.log(defaultPosition)
             const [position, setPosition] = useState<string>("participant")
             const [loading, setLoading] = useState(false)
 
@@ -123,8 +167,8 @@ export const columns: ColumnDef<EventParticipantData>[] = [
                     const { data: eData } = await supabase
                         .from("eventresult")
                         .select("winner, runner_up, second_runner_up")
-                        .eq("branch", branchCode)
-                        .eq("event_id", id)
+                        .eq("branch", branchCode ?? "")
+                        .eq("event_id", id ?? "")
 
                     if (
                         eData !== null &&
@@ -156,7 +200,7 @@ export const columns: ColumnDef<EventParticipantData>[] = [
                                     .insert({
                                         event_id: id,
                                         winner: row.original.group?.id,
-                                        branch: branchCode,
+                                        branch: branchCode ?? "",
                                     })
                                 if (error) {
                                     throw new Error(error.message)
@@ -189,7 +233,7 @@ export const columns: ColumnDef<EventParticipantData>[] = [
                                     .insert({
                                         event_id: id,
                                         runner_up: row.original.group?.id,
-                                        branch: branchCode,
+                                        branch: branchCode ?? "",
                                     })
                                 if (error) {
                                     throw new Error(error.message)
@@ -226,7 +270,7 @@ export const columns: ColumnDef<EventParticipantData>[] = [
                                         event_id: id,
                                         second_runner_up:
                                             row.original.group?.id,
-                                        branch: branchCode,
+                                        branch: branchCode ?? "",
                                     })
 
                                 if (error) {
@@ -298,12 +342,9 @@ export const columns: ColumnDef<EventParticipantData>[] = [
 
             return (
                 <form className="flex flex-row gap-2" onSubmit={handleSubmit}>
-                    <Select
-                        onValueChange={(e) => setPosition(e as string)}
-                        defaultValue={position}
-                    >
+                    <Select onValueChange={(e) => setPosition(e as string)}>
                         <SelectTrigger>
-                            <SelectValue placeholder={position} />
+                            <SelectValue placeholder={defaultPosition} />
                         </SelectTrigger>
                         <SelectContent>
                             <SelectGroup>

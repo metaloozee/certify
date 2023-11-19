@@ -23,6 +23,7 @@ export interface Database {
                     {
                         foreignKeyName: "admin_id_fkey"
                         columns: ["id"]
+                        isOneToOne: true
                         referencedRelation: "student"
                         referencedColumns: ["id"]
                     },
@@ -66,18 +67,21 @@ export interface Database {
                     {
                         foreignKeyName: "event_runner_up_fkey"
                         columns: ["runner_up"]
+                        isOneToOne: false
                         referencedRelation: "group"
                         referencedColumns: ["id"]
                     },
                     {
                         foreignKeyName: "event_second_runner_up_fkey"
                         columns: ["second_runner_up"]
+                        isOneToOne: false
                         referencedRelation: "group"
                         referencedColumns: ["id"]
                     },
                     {
                         foreignKeyName: "event_winner_fkey"
                         columns: ["winner"]
+                        isOneToOne: false
                         referencedRelation: "group"
                         referencedColumns: ["id"]
                     },
@@ -103,14 +107,72 @@ export interface Database {
                     {
                         foreignKeyName: "eventparticipant_event_id_fkey"
                         columns: ["event_id"]
+                        isOneToOne: false
                         referencedRelation: "event"
                         referencedColumns: ["id"]
                     },
                     {
                         foreignKeyName: "eventparticipant_group_id_fkey"
                         columns: ["group_id"]
+                        isOneToOne: true
                         referencedRelation: "group"
                         referencedColumns: ["id"]
+                    },
+                ]
+            }
+            eventresult: {
+                Row: {
+                    branch: string
+                    event_id: string | null
+                    id: string
+                    runner_up: string | null
+                    second_runner_up: string | null
+                    winner: string | null
+                }
+                Insert: {
+                    branch: string
+                    event_id?: string | null
+                    id?: string
+                    runner_up?: string | null
+                    second_runner_up?: string | null
+                    winner?: string | null
+                }
+                Update: {
+                    branch?: string
+                    event_id?: string | null
+                    id?: string
+                    runner_up?: string | null
+                    second_runner_up?: string | null
+                    winner?: string | null
+                }
+                Relationships: [
+                    {
+                        foreignKeyName: "eventresult_event_id_fkey"
+                        columns: ["event_id"]
+                        isOneToOne: false
+                        referencedRelation: "event"
+                        referencedColumns: ["id"]
+                    },
+                    {
+                        foreignKeyName: "eventresult_runner_up_fkey"
+                        columns: ["runner_up"]
+                        isOneToOne: false
+                        referencedRelation: "eventparticipant"
+                        referencedColumns: ["group_id"]
+                    },
+                    {
+                        foreignKeyName: "eventresult_second_runner_up_fkey"
+                        columns: ["second_runner_up"]
+                        isOneToOne: false
+                        referencedRelation: "eventparticipant"
+                        referencedColumns: ["group_id"]
+                    },
+                    {
+                        foreignKeyName: "eventresult_winner_fkey"
+                        columns: ["winner"]
+                        isOneToOne: false
+                        referencedRelation: "eventparticipant"
+                        referencedColumns: ["group_id"]
                     },
                 ]
             }
@@ -149,12 +211,14 @@ export interface Database {
                     {
                         foreignKeyName: "groupmember_group_id_fkey"
                         columns: ["group_id"]
+                        isOneToOne: false
                         referencedRelation: "group"
                         referencedColumns: ["id"]
                     },
                     {
                         foreignKeyName: "groupmember_student_id_fkey"
                         columns: ["student_id"]
+                        isOneToOne: false
                         referencedRelation: "student"
                         referencedColumns: ["id"]
                     },
@@ -186,38 +250,8 @@ export interface Database {
                     {
                         foreignKeyName: "student_id_fkey"
                         columns: ["id"]
+                        isOneToOne: true
                         referencedRelation: "users"
-                        referencedColumns: ["id"]
-                    },
-                ]
-            }
-            templatecords: {
-                Row: {
-                    class_cords: string[] | null
-                    event_id: string
-                    eventname_cords: string[] | null
-                    id: number
-                    name_cords: string[] | null
-                }
-                Insert: {
-                    class_cords?: string[] | null
-                    event_id: string
-                    eventname_cords?: string[] | null
-                    id?: number
-                    name_cords?: string[] | null
-                }
-                Update: {
-                    class_cords?: string[] | null
-                    event_id?: string
-                    eventname_cords?: string[] | null
-                    id?: number
-                    name_cords?: string[] | null
-                }
-                Relationships: [
-                    {
-                        foreignKeyName: "templatecords_event_id_fkey"
-                        columns: ["event_id"]
-                        referencedRelation: "event"
                         referencedColumns: ["id"]
                     },
                 ]
