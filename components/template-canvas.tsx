@@ -3,8 +3,8 @@ import { ChangeEvent, useEffect, useState } from "react"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
-
-import { toast } from "./ui/use-toast"
+import { toast } from "@/components/ui/use-toast"
+import { EventData } from "@/components/event-card"
 
 export const CanvasImage = ({
     template,
@@ -12,12 +12,14 @@ export const CanvasImage = ({
     cords,
     setCords,
     setTemplateFile,
+    event,
 }: {
     template: HTMLImageElement | null
     setTemplate: any
     cords: number[][]
     setCords: any
     setTemplateFile: any
+    event: EventData
 }) => {
     useEffect(() => {
         const Canvas: any = document.getElementById("canvas")
@@ -95,8 +97,8 @@ export const CanvasImage = ({
             ctx.font = "30px Arial"
             ctx.fillText("Your name here", cords[0][0], cords[0][1])
             ctx.fillText("TYIF", cords[1][0], cords[1][1])
-            ctx.fillText("10/10/2023", cords[2][0], cords[2][1])
-            ctx.fillText("Model Making", cords[3][0], cords[3][1])
+            ctx.fillText(event.date ?? "2005/04/18", cords[2][0], cords[2][1])
+            ctx.fillText(event.name ?? "Event Name", cords[3][0], cords[3][1])
             ctx.fillText("First Runner Up", cords[4][0], cords[4][1])
         }
     }
