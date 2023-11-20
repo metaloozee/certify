@@ -129,7 +129,6 @@ export const columns: ColumnDef<EventParticipantData>[] = [
                             throw new Error(error.message)
                         }
 
-                        console.log(data)
                         if (data?.winner == row.original.group?.id) {
                             return setDefaultPosition("Winner")
                         } else if (data?.runner_up == row.original.group?.id) {
@@ -150,7 +149,6 @@ export const columns: ColumnDef<EventParticipantData>[] = [
                 fetchPosition()
             }, [])
 
-            console.log(defaultPosition)
             const [position, setPosition] = useState<string>("participant")
             const [loading, setLoading] = useState(false)
 
@@ -166,7 +164,7 @@ export const columns: ColumnDef<EventParticipantData>[] = [
                     setLoading(true)
                     const { data: eData } = await supabase
                         .from("eventresult")
-                        .select("winner, runner_up, second_runner_up")
+                        .select("id, winner, runner_up, second_runner_up")
                         .eq("branch", branchCode ?? "")
                         .eq("event_id", id ?? "")
 
@@ -197,7 +195,8 @@ export const columns: ColumnDef<EventParticipantData>[] = [
                             } else {
                                 const { error } = await supabase
                                     .from("eventresult")
-                                    .insert({
+                                    .upsert({
+                                        id: element?.id,
                                         event_id: id,
                                         winner: row.original.group?.id,
                                         branch: branchCode ?? "",
@@ -230,11 +229,13 @@ export const columns: ColumnDef<EventParticipantData>[] = [
                             } else {
                                 const { error } = await supabase
                                     .from("eventresult")
-                                    .insert({
+                                    .upsert({
+                                        id: element?.id,
                                         event_id: id,
                                         runner_up: row.original.group?.id,
                                         branch: branchCode ?? "",
                                     })
+                                    .eq("event_id", id ?? "")
                                 if (error) {
                                     throw new Error(error.message)
                                 }
@@ -266,7 +267,8 @@ export const columns: ColumnDef<EventParticipantData>[] = [
                             } else {
                                 const { error } = await supabase
                                     .from("eventresult")
-                                    .insert({
+                                    .upsert({
+                                        id: element?.id,
                                         event_id: id,
                                         second_runner_up:
                                             row.original.group?.id,
@@ -284,15 +286,18 @@ export const columns: ColumnDef<EventParticipantData>[] = [
                             })
                         }
                     } else if (position === "participant") {
-                        console.log(element?.winner)
                         for (let i = 0; i < eData!.length; i++) {
                             element = eData![i]
                         }
                         if (element?.winner === row.original.group?.id) {
                             const { error } = await supabase
                                 .from("eventresult")
-                                .delete()
-                                .eq("winner", row.original.group?.id ?? "")
+                                .upsert({
+                                    id: element?.id,
+                                    event_id: id,
+                                    winner: null,
+                                    branch: branchCode ?? "",
+                                })
 
                             if (error) {
                                 throw new Error(error.message)
@@ -302,8 +307,12 @@ export const columns: ColumnDef<EventParticipantData>[] = [
                         ) {
                             const { error } = await supabase
                                 .from("eventresult")
-                                .delete()
-                                .eq("runner_up", row.original.group?.id ?? "")
+                                .upsert({
+                                    id: element?.id,
+                                    event_id: id,
+                                    runner_up: null,
+                                    branch: branchCode ?? "",
+                                })
 
                             if (error) {
                                 throw new Error(error.message)
@@ -313,11 +322,12 @@ export const columns: ColumnDef<EventParticipantData>[] = [
                         ) {
                             const { error } = await supabase
                                 .from("eventresult")
-                                .delete()
-                                .eq(
-                                    "second_runner_up",
-                                    row.original.group?.id ?? ""
-                                )
+                                .upsert({
+                                    id: element?.id,
+                                    event_id: id,
+                                    second_runner_up: null,
+                                    branch: branchCode ?? "",
+                                })
 
                             if (error) {
                                 throw new Error(error.message)
