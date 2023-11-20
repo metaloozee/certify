@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useState } from "react"
 import { CalendarIcon, ReloadIcon, RocketIcon } from "@radix-ui/react-icons"
 import type { Session } from "@supabase/auth-helpers-nextjs"
 import { format } from "date-fns"
@@ -15,6 +15,14 @@ import { cn } from "@/lib/utils"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { Button } from "@/components/ui/button"
 import { Calendar } from "@/components/ui/calendar"
+import {
+    Card,
+    CardContent,
+    CardDescription,
+    CardFooter,
+    CardHeader,
+    CardTitle,
+} from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import {
@@ -22,6 +30,7 @@ import {
     PopoverContent,
     PopoverTrigger,
 } from "@/components/ui/popover"
+import { Switch } from "@/components/ui/switch"
 import { useSupabase } from "@/app/supabase-provider"
 
 export type User = {
@@ -35,6 +44,7 @@ export type Event = {
     isopen: boolean | null
     name: string | null
     team_limit: number
+    branchwise: boolean
 }
 
 export const EventForm = ({
@@ -178,13 +188,16 @@ export const EventForm = ({
                         .eq("enrollment", enrollmentNumber)
                         .maybeSingle()
 
-                console.log(studentData?.class?.slice(2))
-                if (
-                    studentData?.class?.slice(2) !== leaderData?.class?.slice(2)
-                ) {
-                    throw new Error(
-                        "Not all of the teammates you listed are from the same branch as you."
-                    )
+                // Checking if the users are from the same branch as the leader or not
+                if (event.branchwise === true) {
+                    if (
+                        studentData?.class?.slice(2) !==
+                        leaderData?.class?.slice(2)
+                    ) {
+                        throw new Error(
+                            "Not all of the teammates you listed are from the same branch as you."
+                        )
+                    }
                 }
 
                 if (studentDataError || !studentData) {
@@ -297,6 +310,7 @@ export const AdminEventForm = ({ session }: { session: Session | null }) => {
     )
     const [startDate, setStartDate] = useState<Date>()
     const [memberLimit, setMemberLimit] = useState(0)
+    const [isBranchWise, setIsBranchWise] = useState(false)
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
@@ -319,6 +333,7 @@ export const AdminEventForm = ({ session }: { session: Session | null }) => {
                         date:
                             startDate?.toDateString() ?? Date.now().toString(),
                         team_limit: memberLimit,
+                        branchwise: isBranchWise,
                     })
 
                 if (error) {
@@ -340,9 +355,9 @@ export const AdminEventForm = ({ session }: { session: Session | null }) => {
     return (
         <div className="mt-10 space-y-3">
             <h1 className="text-2xl font-bold">Create New Event</h1>
-            <form onSubmit={handleSubmit} className="space-y-8">
+            <form onSubmit={handleSubmit} className="w-full space-y-8">
                 <div className="flex flex-col md:flex-row gap-5">
-                    <div className="space-y-2">
+                    <div className="w-full space-y-2">
                         <Label>Name</Label>
                         <Input
                             type="text"
@@ -352,7 +367,7 @@ export const AdminEventForm = ({ session }: { session: Session | null }) => {
                             className="w-full"
                         />
                     </div>
-                    <div className="space-y-2">
+                    <div className="w-full space-y-2">
                         <Label>Description</Label>
                         <Input
                             type="text"
@@ -365,7 +380,7 @@ export const AdminEventForm = ({ session }: { session: Session | null }) => {
                     </div>
                 </div>
                 <div className="flex flex-col md:flex-row gap-5">
-                    <div className="space-y-2">
+                    <div className="w-full space-y-2">
                         <Label>Team members limit</Label>
                         <Input
                             type="number"
@@ -377,7 +392,7 @@ export const AdminEventForm = ({ session }: { session: Session | null }) => {
                             className="w-full"
                         />
                     </div>
-                    <div className="space-y-2">
+                    <div className="w-full space-y-2">
                         <Label>Start Date</Label>
                         <br />
                         <Popover>
@@ -385,7 +400,7 @@ export const AdminEventForm = ({ session }: { session: Session | null }) => {
                                 <Button
                                     variant={"outline"}
                                     className={cn(
-                                        "w-[240px] pl-3 text-left font-normal",
+                                        "w-full pl-3 text-left font-normal",
                                         !startDate && "text-muted-foreground"
                                     )}
                                 >
@@ -416,6 +431,25 @@ export const AdminEventForm = ({ session }: { session: Session | null }) => {
                         </Popover>
                     </div>
                 </div>
+
+                <Card className="w-full flex justify-between items-center">
+                    <CardHeader>
+                        <CardTitle className="text-md">
+                            Enable Branchwise
+                        </CardTitle>
+                        <CardDescription className="text-sm">
+                            If this is enabled, the groups will only contain
+                            students from the same branch.
+                        </CardDescription>
+                    </CardHeader>
+
+                    <CardContent>
+                        <Switch
+                            checked={isBranchWise}
+                            onCheckedChange={(e) => setIsBranchWise(e)}
+                        />
+                    </CardContent>
+                </Card>
 
                 <Button
                     disabled={loading === !success}

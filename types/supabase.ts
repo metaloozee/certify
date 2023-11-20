@@ -31,6 +31,7 @@ export interface Database {
             }
             event: {
                 Row: {
+                    branchwise: boolean
                     date: string | null
                     description: string | null
                     id: string
@@ -42,6 +43,7 @@ export interface Database {
                     winner: string | null
                 }
                 Insert: {
+                    branchwise?: boolean
                     date?: string | null
                     description?: string | null
                     id?: string
@@ -53,6 +55,7 @@ export interface Database {
                     winner?: string | null
                 }
                 Update: {
+                    branchwise?: boolean
                     date?: string | null
                     description?: string | null
                     id?: string
