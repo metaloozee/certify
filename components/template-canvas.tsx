@@ -30,16 +30,10 @@ export const CanvasImage = ({
                 drawImageOnCanvas(Canvas)
                 fillText(Canvas)
             } else {
-                ctx.clearRect(0, 0, Canvas.width, Canvas.height)
-                ctx.fillStyle = "#ff0000"
-                ctx.fillText(
-                    "Template width is more than 1920 pixels!",
-                    Canvas.width / 4,
-                    Canvas.height / 2
-                )
-
+                setTemplateFile(null)
                 toast({
                     title: "Template Error!",
+                    variant: "destructive",
                     description:
                         "The template width exceeds 1920 pixels limit.",
                 })
@@ -109,7 +103,7 @@ export const CanvasImage = ({
 
     const handleClick = (e: any) => {
         const canvas: any = document.getElementById("canvas")
-        if (canvas) {
+        if (canvas && template) {
             const ctx = canvas.getContext("2d")
 
             if (ctx) {
