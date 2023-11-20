@@ -2,16 +2,19 @@
 
 import { useState } from "react"
 
+import { EventData } from "@/components/event-card"
 import { CanvasImage } from "@/components/template-canvas"
 
 export const TemplateConfigForm = ({
     cords,
     setCords,
     setTemplateFile,
+    event,
 }: {
     cords: number[][]
     setCords: any
     setTemplateFile: any
+    event: EventData
 }) => {
     const [template, setTemplate] = useState<HTMLImageElement | null>(null)
 
@@ -24,6 +27,7 @@ export const TemplateConfigForm = ({
                     cords={cords}
                     setCords={setCords}
                     setTemplateFile={setTemplateFile}
+                    event={event}
                 />
             </div>
         </div>

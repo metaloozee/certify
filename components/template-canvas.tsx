@@ -3,6 +3,8 @@ import { ChangeEvent, useEffect, useState } from "react"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
+import { toast } from "@/components/ui/use-toast"
+import { EventData } from "@/components/event-card"
 
 export const CanvasImage = ({
     template,
@@ -10,23 +12,35 @@ export const CanvasImage = ({
     cords,
     setCords,
     setTemplateFile,
+    event,
 }: {
     template: HTMLImageElement | null
     setTemplate: any
     cords: number[][]
     setCords: any
     setTemplateFile: any
+    event: EventData
 }) => {
     useEffect(() => {
         const Canvas: any = document.getElementById("canvas")
-        if (template) {
-            drawImageOnCanvas(Canvas)
-            fillText(Canvas)
-        } else {
-            const ctx = Canvas.getContext("2d")
-            ctx.font = "20px Arial"
+        const ctx = Canvas.getContext("2d")
+        ctx.font = "20px Arial"
 
-            ctx.fillStyle = "#ffffff"
+        ctx.fillStyle = "#ffffff"
+        if (template) {
+            if (template.width <= 1920) {
+                drawImageOnCanvas(Canvas)
+                fillText(Canvas)
+            } else {
+                setTemplateFile(null)
+                toast({
+                    title: "Template Error!",
+                    variant: "destructive",
+                    description:
+                        "The template width exceeds 1920 pixels limit.",
+                })
+            }
+        } else {
             ctx.fillText(
                 "Please Upload A Template",
                 Canvas.width / 3,
@@ -79,18 +93,19 @@ export const CanvasImage = ({
     const fillText = (canvas: HTMLCanvasElement) => {
         const ctx = canvas?.getContext("2d")
         if (ctx) {
+            ctx.fillStyle = "#000000"
             ctx.font = "30px Arial"
             ctx.fillText("Your name here", cords[0][0], cords[0][1])
             ctx.fillText("TYIF", cords[1][0], cords[1][1])
-            ctx.fillText("10/10/2023", cords[2][0], cords[2][1])
-            ctx.fillText("Model Making", cords[3][0], cords[3][1])
+            ctx.fillText(event.date ?? "2005/04/18", cords[2][0], cords[2][1])
+            ctx.fillText(event.name ?? "Event Name", cords[3][0], cords[3][1])
             ctx.fillText("First Runner Up", cords[4][0], cords[4][1])
         }
     }
 
     const handleClick = (e: any) => {
         const canvas: any = document.getElementById("canvas")
-        if (canvas) {
+        if (canvas && template) {
             const ctx = canvas.getContext("2d")
 
             if (ctx) {
@@ -116,7 +131,7 @@ export const CanvasImage = ({
                 id="template"
             />
             <p className="ml-2 mt-1 text-xs text-slate-500">
-                Image size should not exceed 1080 * 720 pixels
+                Image width should be between 700 to 1920 pixels
             </p>
             <div>
                 <RadioGroup className="flex mt-5" defaultValue="name">
@@ -166,8 +181,16 @@ export const CanvasImage = ({
                     style={{ border: "1px solid white" }}
                     className="my-10"
                     id="canvas"
-                    width={template ? template.width : "720"}
-                    height={template ? template.height : "480"}
+                    width={
+                        template && template.width <= 1920
+                            ? template.width
+                            : "720"
+                    }
+                    height={
+                        template && template.width <= 1920
+                            ? template.height
+                            : "480"
+                    }
                     onClick={(e) => handleClick(e)}
                 ></canvas>
             </div>

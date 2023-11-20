@@ -133,6 +133,7 @@ export const EndEventForm = ({ event }: { event: EventData }) => {
                     cords={cords}
                     setCords={setCords}
                     setTemplateFile={setTemplateFile}
+                    event={event}
                 />
             </div>
             <div className="w-full flex justify-center">
