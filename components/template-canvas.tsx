@@ -115,6 +115,9 @@ export const CanvasImage = ({
                 type="file"
                 id="template"
             />
+            <p className="ml-2 mt-1 text-xs text-slate-500">
+                Image size should not exceed 1080 * 720 pixels
+            </p>
             <div>
                 <RadioGroup className="flex mt-5" defaultValue="name">
                     <div className="flex items-center space-x-2">
