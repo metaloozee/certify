@@ -4,6 +4,8 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 
+import { toast } from "./ui/use-toast"
+
 export const CanvasImage = ({
     template,
     setTemplate,
@@ -19,14 +21,30 @@ export const CanvasImage = ({
 }) => {
     useEffect(() => {
         const Canvas: any = document.getElementById("canvas")
-        if (template) {
-            drawImageOnCanvas(Canvas)
-            fillText(Canvas)
-        } else {
-            const ctx = Canvas.getContext("2d")
-            ctx.font = "20px Arial"
+        const ctx = Canvas.getContext("2d")
+        ctx.font = "20px Arial"
 
-            ctx.fillStyle = "#ffffff"
+        ctx.fillStyle = "#ffffff"
+        if (template) {
+            if (template.width <= 1920) {
+                drawImageOnCanvas(Canvas)
+                fillText(Canvas)
+            } else {
+                ctx.clearRect(0, 0, Canvas.width, Canvas.height)
+                ctx.fillStyle = "#ff0000"
+                ctx.fillText(
+                    "Template width is more than 1920 pixels!",
+                    Canvas.width / 4,
+                    Canvas.height / 2
+                )
+
+                toast({
+                    title: "Template Error!",
+                    description:
+                        "The template width exceeds 1920 pixels limit.",
+                })
+            }
+        } else {
             ctx.fillText(
                 "Please Upload A Template",
                 Canvas.width / 3,
@@ -79,6 +97,7 @@ export const CanvasImage = ({
     const fillText = (canvas: HTMLCanvasElement) => {
         const ctx = canvas?.getContext("2d")
         if (ctx) {
+            ctx.fillStyle = "#000000"
             ctx.font = "30px Arial"
             ctx.fillText("Your name here", cords[0][0], cords[0][1])
             ctx.fillText("TYIF", cords[1][0], cords[1][1])
@@ -116,7 +135,7 @@ export const CanvasImage = ({
                 id="template"
             />
             <p className="ml-2 mt-1 text-xs text-slate-500">
-                Image size should not exceed 1080 * 720 pixels
+                Image width should be between 700 to 1920 pixels
             </p>
             <div>
                 <RadioGroup className="flex mt-5" defaultValue="name">
@@ -166,8 +185,16 @@ export const CanvasImage = ({
                     style={{ border: "1px solid white" }}
                     className="my-10"
                     id="canvas"
-                    width={template ? template.width : "720"}
-                    height={template ? template.height : "480"}
+                    width={
+                        template && template.width <= 1920
+                            ? template.width
+                            : "720"
+                    }
+                    height={
+                        template && template.width <= 1920
+                            ? template.height
+                            : "480"
+                    }
                     onClick={(e) => handleClick(e)}
                 ></canvas>
             </div>
