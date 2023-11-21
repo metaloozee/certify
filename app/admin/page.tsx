@@ -58,7 +58,7 @@ export default async function AdminPage() {
                                 ))}
                         </div>
                     ) : (
-                        <h1 className="font-bold text-2xl mt-10">
+                        <h1 className="text-center text-2xl md:text-3xl font-light">
                             No ongoing events
                         </h1>
                     )}
@@ -71,7 +71,7 @@ export default async function AdminPage() {
                             ))}
                         </div>
                     ) : (
-                        <h1 className="font-bold text-2xl mt-10">
+                        <h1 className="text-center text-2xl md:text-3xl font-light">
                             No past events
                         </h1>
                     )}
