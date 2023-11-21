@@ -32,6 +32,7 @@ export const CanvasImage = ({
                 drawImageOnCanvas(Canvas)
                 fillText(Canvas)
             } else {
+                setTemplate(null)
                 setTemplateFile(null)
                 toast({
                     title: "Template Error!",
