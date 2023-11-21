@@ -46,20 +46,35 @@ export default async function AdminPage() {
                     value="ongoing-events"
                     className="flex justify-center"
                 >
-                    <div className="flex flex-wrap justify-between items-center gap-5">
-                        {currentEvents
-                            ?.reverse()
-                            ?.map((d) => (
-                                <AdminOngoingEventCard key={d.id} data={d} />
-                            ))}
-                    </div>
+                    {currentEvents && currentEvents.length > 0 ? (
+                        <div className="flex flex-wrap justify-between items-center gap-5">
+                            {currentEvents
+                                ?.reverse()
+                                ?.map((d) => (
+                                    <AdminOngoingEventCard
+                                        key={d.id}
+                                        data={d}
+                                    />
+                                ))}
+                        </div>
+                    ) : (
+                        <h1 className="text-center text-2xl md:text-3xl font-light">
+                            No ongoing events
+                        </h1>
+                    )}
                 </TabsContent>
                 <TabsContent value="past-events">
-                    <div className="flex flex-wrap justify-between items-center gap-5">
-                        {pastEvents?.map((d) => (
-                            <AdminEndedEventCard key={d.id} data={d} />
-                        ))}
-                    </div>
+                    {pastEvents && pastEvents.length > 0 ? (
+                        <div className="flex flex-wrap justify-between items-center gap-5">
+                            {pastEvents?.map((d) => (
+                                <AdminEndedEventCard key={d.id} data={d} />
+                            ))}
+                        </div>
+                    ) : (
+                        <h1 className="text-center text-2xl md:text-3xl font-light">
+                            No past events
+                        </h1>
+                    )}
                 </TabsContent>
                 <TabsContent value="new-event">
                     <AdminEventForm session={session} />
