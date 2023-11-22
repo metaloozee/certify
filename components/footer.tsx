@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input"
 
 export const Footer = () => {
     return (
-        <footer>
+        <footer className="absolute w-full top-full">
             <div className="container border-t bg-background flex flex-col flex-wrap items-center justify-center py-8 mx-auto md:items-center lg:items-start md:flex-row md:flex-nowrap">
                 <div className="flex-shrink-0 w-64 mx-auto text-center md:mx-0 md:text-left space-y-2">
                     <Link href={"/"} className="text-2xl text-white font-bold">

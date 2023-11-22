@@ -17,9 +17,9 @@ export default async function AccountPage() {
 
     if (!session) {
         return (
-            <div className="flex flex-col gap-2 justify-center items-center">
+            <div className="flex flex-col gap-2 justify-center items-center text-center">
                 <h1 className="text-3xl font-bold">Unauthorized</h1>
-                <p>
+                <p className="text-slate-500">
                     Please login or setup your account in order to view this
                     page
                 </p>

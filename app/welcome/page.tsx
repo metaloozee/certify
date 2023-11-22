@@ -24,10 +24,24 @@ export default async function OnBoardPage() {
         }
     }
 
+    if (!session) {
+        return (
+            <div className="flex flex-col gap-2 justify-center items-center text-center">
+                <h1 className="text-3xl font-bold">Unauthorized</h1>
+                <p className="text-slate-500">
+                    Please login or setup your account in order to view this
+                    page
+                </p>
+            </div>
+        )
+    }
+
     return (
-        <div className="flex flex-col gap-2 justify-center items-center">
+        <div className="flex flex-col gap-2 justify-center items-center text-center">
             <h1 className="text-3xl font-bold">Already Registered</h1>
-            <p>You have already finished setting up your account!</p>
+            <p className="text-slate-500">
+                You have already finished setting up your account!
+            </p>
         </div>
     )
 }

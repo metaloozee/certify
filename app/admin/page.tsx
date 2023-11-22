@@ -82,9 +82,11 @@ export default async function AdminPage() {
             </Tabs>
         </div>
     ) : (
-        <div className="flex flex-col gap-2 justify-center items-center">
+        <div className="flex flex-col gap-2 justify-center items-center text-center">
             <h1 className="text-3xl font-bold">Unauthorized</h1>
-            <p>You don't have enough permissions to access this page.</p>
+            <p className="text-slate-500">
+                You don't have enough permissions to access this page.
+            </p>
         </div>
     )
 }

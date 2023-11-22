@@ -29,9 +29,9 @@ export default async function EventPage({ params }: { params: any }) {
 
     if (!session || !user) {
         return (
-            <div className="flex flex-col gap-2 justify-center items-center">
+            <div className="flex flex-col gap-2 justify-center items-center text-center">
                 <h1 className="text-3xl font-bold">Unauthorized</h1>
-                <p>
+                <p className="text-slate-500">
                     Please login or setup your account in order to participate
                     in our event!
                 </p>
@@ -41,11 +41,11 @@ export default async function EventPage({ params }: { params: any }) {
 
     if (userError || groupError || !event) {
         return (
-            <div className="flex flex-col gap-2 justify-center items-center">
+            <div className="flex flex-col gap-2 justify-center items-center text-center">
                 <h1 className="text-3xl font-bold">
                     An Unknown Error Occurred
                 </h1>
-                <p>
+                <p className="text-slate-500">
                     Sorry for the inconvienience. Try again later, if the same
                     error occurs then kindly contact the admins!
                 </p>
@@ -57,9 +57,9 @@ export default async function EventPage({ params }: { params: any }) {
 
     if (groups && groups?.length > 0) {
         return (
-            <div className="flex flex-col gap-2 justify-center items-center">
+            <div className="flex flex-col gap-2 justify-center items-center text-center">
                 <h1 className="text-3xl font-bold">Already Registered</h1>
-                <p>
+                <p className="text-slate-500">
                     You have already registered yourself in this event, kindly
                     contact the admins if you want to remove yourself.
                 </p>
