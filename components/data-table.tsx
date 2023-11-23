@@ -437,14 +437,11 @@ export const columns: ColumnDef<EventParticipantData>[] = [
         accessorKey: "branch",
         header: "Branch",
         cell: ({ row }) => {
-            const members = row.original.group?.groupmember || []
             return (
                 <div className="space-y-2">
-                    {members.map((member, index) => (
+                    {row.original.group?.groupmember.map((member, index) => (
                         <div key={index}>
-                            {row.original.group?.groupmember[0]?.student?.class?.slice(
-                                -2
-                            )}
+                            {member.student?.class?.slice(-2)}
                         </div>
                     ))}
                 </div>
