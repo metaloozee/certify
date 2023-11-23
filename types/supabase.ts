@@ -233,6 +233,7 @@ export interface Database {
                     enrollment: string | null
                     first_name: string | null
                     id: string
+                    is_edited: boolean | null
                     last_name: string | null
                 }
                 Insert: {
@@ -240,6 +241,7 @@ export interface Database {
                     enrollment?: string | null
                     first_name?: string | null
                     id: string
+                    is_edited?: boolean | null
                     last_name?: string | null
                 }
                 Update: {
@@ -247,6 +249,7 @@ export interface Database {
                     enrollment?: string | null
                     first_name?: string | null
                     id?: string
+                    is_edited?: boolean | null
                     last_name?: string | null
                 }
                 Relationships: [
