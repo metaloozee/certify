@@ -7,15 +7,18 @@ import type { Session } from "@supabase/auth-helpers-nextjs"
 
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { Button } from "@/components/ui/button"
-import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuRadioGroup,
-    DropdownMenuRadioItem,
-    DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import {
+    Select,
+    SelectContent,
+    SelectGroup,
+    SelectItem,
+    SelectLabel,
+    SelectTrigger,
+    SelectValue,
+} from "@/components/ui/select"
+import { toast } from "@/components/ui/use-toast"
 import { useSupabase } from "@/app/supabase-provider"
 
 export type ExistingUser = {
@@ -71,23 +74,39 @@ export const EditProfileForm = ({
                 enroll.trim() !== ""
             ) {
                 // Adding the user
-                console.log(lname.trim())
 
-                const { error } = await supabase
+                const { data } = await supabase
                     .from("student")
-                    .update({
-                        first_name: fname,
-                        last_name: lname,
-                        enrollment: enroll,
-                        class: year.concat(branch),
-                    })
+                    .select("class, is_edited")
                     .eq("id", session?.user.id ?? "")
-                if (error) {
-                    throw new Error(error.message)
-                }
+                    .maybeSingle()
 
-                setSuccess(true)
-                router.refresh()
+                if (data?.class?.slice(2) === branch || !data?.is_edited) {
+                    const { error } = await supabase
+                        .from("student")
+                        .update({
+                            first_name: fname,
+                            last_name: lname,
+                            enrollment: enroll,
+                            class: year.concat(branch),
+                            is_edited:
+                                data?.class?.slice(2) !== branch ||
+                                data?.is_edited,
+                        })
+                        .eq("id", session?.user.id ?? "")
+                    if (error) {
+                        throw new Error(error.message)
+                    }
+                    setSuccess(true)
+                    router.refresh()
+                } else {
+                    toast({
+                        variant: "destructive",
+                        title: "Cannot edit branch!",
+                        description:
+                            "Please contact administrator for any changes.",
+                    })
+                }
             } else {
                 throw new Error("Please enter valid inputs")
             }
@@ -139,64 +158,59 @@ export const EditProfileForm = ({
                         value={enroll ?? ""}
                     />
                 </div>
+
                 <div className="flex gap-5">
-                    <div className="space-x-2">
-                        <Label htmlFor="branch">Branch</Label>
-                        <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                                <Button variant="outline">Open</Button>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent className="w-56">
-                                <DropdownMenuRadioGroup
-                                    value={branch}
-                                    onValueChange={setBranch}
-                                >
-                                    <DropdownMenuRadioItem value="IF">
-                                        IF
-                                    </DropdownMenuRadioItem>
-                                    <DropdownMenuRadioItem value="EJ">
-                                        EJ
-                                    </DropdownMenuRadioItem>
-                                    <DropdownMenuRadioItem value="ME">
-                                        ME
-                                    </DropdownMenuRadioItem>
-                                    <DropdownMenuRadioItem value="CO">
-                                        CO
-                                    </DropdownMenuRadioItem>
-                                    <DropdownMenuRadioItem value="CE">
-                                        CE
-                                    </DropdownMenuRadioItem>
-                                </DropdownMenuRadioGroup>
-                            </DropdownMenuContent>
-                        </DropdownMenu>
-                    </div>
                     <div className="flex gap-5">
-                        <div className="space-x-2">
-                            <Label htmlFor="year">Year</Label>
-                            <DropdownMenu>
-                                <DropdownMenuTrigger asChild>
-                                    <Button variant="outline">Open</Button>
-                                </DropdownMenuTrigger>
-                                <DropdownMenuContent className="w-56">
-                                    <DropdownMenuRadioGroup
-                                        value={year}
-                                        onValueChange={setYear}
-                                    >
-                                        <DropdownMenuRadioItem value="FY">
-                                            FY
-                                        </DropdownMenuRadioItem>
-                                        <DropdownMenuRadioItem value="SY">
-                                            SY
-                                        </DropdownMenuRadioItem>
-                                        <DropdownMenuRadioItem value="TY">
-                                            TY
-                                        </DropdownMenuRadioItem>
-                                    </DropdownMenuRadioGroup>
-                                </DropdownMenuContent>
-                            </DropdownMenu>
+                        <div className="space-x-2 flex items-center justify-center">
+                            <Label>Year:</Label>
+                            <Select onValueChange={(e) => setYear(e as string)}>
+                                <SelectTrigger>
+                                    <SelectValue placeholder={year} />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectGroup>
+                                        <SelectLabel>Branch</SelectLabel>
+                                        <SelectItem value="FY">FY</SelectItem>
+                                        <SelectItem value="SY">SY</SelectItem>
+                                        <SelectItem value="TY">TY</SelectItem>
+                                    </SelectGroup>
+                                </SelectContent>
+                            </Select>
                         </div>
                     </div>
+                    <div className="space-x-2 flex items-center justify-center">
+                        <Label>Branch: </Label>
+                        <Select onValueChange={(e) => setBranch(e as string)}>
+                            <SelectTrigger>
+                                <SelectValue placeholder={branch} />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectGroup>
+                                    <SelectLabel>Branch</SelectLabel>
+                                    <SelectItem value="IF">
+                                        Information Technology
+                                    </SelectItem>
+                                    <SelectItem value="ME">
+                                        Mechanical Engineering
+                                    </SelectItem>
+                                    <SelectItem value="CO">
+                                        Computer Engineering
+                                    </SelectItem>
+                                    <SelectItem value="EJ">
+                                        Electrical Engineering
+                                    </SelectItem>
+                                    <SelectItem value="CE">
+                                        Civil Engineering
+                                    </SelectItem>
+                                </SelectGroup>
+                            </SelectContent>
+                        </Select>
+                    </div>
                 </div>
+                <p className=" text-xs font-bold text-slate-500">
+                    Note: You can only change your branch once. Please contact
+                    administrator for further corrections.
+                </p>
 
                 <Button
                     disabled={loading === !success}
