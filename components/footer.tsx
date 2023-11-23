@@ -9,11 +9,11 @@ export const Footer = () => {
         <footer className="absolute w-full top-full">
             <div className="container border-t bg-background flex flex-col flex-wrap items-center justify-center py-8 mx-auto md:items-center lg:items-start md:flex-row md:flex-nowrap">
                 <div className="flex-shrink-0 w-64 mx-auto text-center md:mx-0 md:text-left space-y-2">
-                    <Link href={"/"} className="text-2xl text-white font-bold">
+                    <Link href={"/"} className="text-2xl font-bold">
                         Certify
                     </Link>
                     <p className="text-slate-500 text-xs">
-                        @ 2024 All Rights Reserved
+                        &copy; 2024 All Rights Reserved
                     </p>
                 </div>
                 <div className="justify-between w-full mt-6 lg:mt-0 text-center lg:text-left lg:flex">

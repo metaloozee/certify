@@ -24,9 +24,9 @@ export default function NotFound() {
                     <Link className="text-primary" href={"/"}>
                         magical link
                     </Link>
-                    , and let the adventure
+                    , and let the adventure continue.
                     <br />
-                    continue. Cheers to a fabulous time!
+                    Cheers to a fabulous time!
                 </p>
             </div>
         </div>
