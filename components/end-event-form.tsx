@@ -29,6 +29,7 @@ interface RequestFormat {
     date_cords: number[]
     postion_cords: number[]
     template_url: string
+    token: string | undefined
 }
 
 export const EndEventForm = ({ event }: { event: EventData }) => {
@@ -74,8 +75,10 @@ export const EndEventForm = ({ event }: { event: EventData }) => {
                 date_cords: cords[3],
                 postion_cords: cords[4],
                 template_url: template_url,
+                token: process.env.NEXT_PUBLIC_REQUEST_TOKEN,
             }
             console.log(data)
+
             const response = await axios.post(
                 "https://legit9.pythonanywhere.com/certify/generateCertificates/",
                 data
