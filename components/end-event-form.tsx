@@ -2,6 +2,7 @@
 
 import { useState } from "react"
 import { useRouter } from "next/navigation"
+import { env } from "@/env.mjs"
 import { ArrowBottomRightIcon } from "@radix-ui/react-icons"
 import axios from "axios"
 import { Loader2 } from "lucide-react"
@@ -29,6 +30,7 @@ interface RequestFormat {
     date_cords: number[]
     postion_cords: number[]
     template_url: string
+    token: string | undefined
 }
 
 export const EndEventForm = ({ event }: { event: EventData }) => {
@@ -74,8 +76,9 @@ export const EndEventForm = ({ event }: { event: EventData }) => {
                 date_cords: cords[3],
                 postion_cords: cords[4],
                 template_url: template_url,
+                token: env.NEXT_PUBLIC_REQUEST_TOKEN,
             }
-            console.log(data)
+
             const response = await axios.post(
                 "https://legit9.pythonanywhere.com/certify/generateCertificates/",
                 data

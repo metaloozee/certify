@@ -3,11 +3,11 @@ import { z } from "zod"
 const server = z.object({
     NEXT_PUBLIC_SUPABASE_URL: z.string().url(),
     NEXT_PUBLIC_SUPABASE_ANON_KEY: z.string(),
-
     NODE_ENV: z.enum(["development", "test", "production"]),
 })
 
 const client = z.object({
+    NEXT_PUBLIC_REQUEST_TOKEN: z.string(),
     // client variables
 })
 
@@ -21,6 +21,7 @@ const client = z.object({
 const processEnv = {
     NEXT_PUBLIC_SUPABASE_URL: process.env.NEXT_PUBLIC_SUPABASE_URL,
     NEXT_PUBLIC_SUPABASE_ANON_KEY: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
+    NEXT_PUBLIC_REQUEST_TOKEN: process.env.NEXT_PUBLIC_REQUEST_TOKEN,
     NODE_ENV: process.env.NODE_ENV,
 }
 
