@@ -1,10 +1,45 @@
+"use client"
+
+import { useEffect, useState } from "react"
 import Link from "next/link"
+import { Session } from "@supabase/supabase-js"
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
+import { toast } from "@/components/ui/use-toast"
+import { useSupabase } from "@/app/supabase-provider"
 
 export const Footer = () => {
+    const { supabase } = useSupabase()
+    const [session, setSession] = useState<Session | null>(null)
+    useEffect(() => {
+        supabase.auth.getSession().then((res) => {
+            console.log(res.data.session)
+
+            setSession(res.data.session)
+        })
+    }, [])
+
+    const [message, setMessage] = useState<string>("")
+
+    const handleSubmit = () => {
+        supabase
+            .from("messages")
+            .insert({
+                from: session?.user.id,
+                content: message,
+            })
+            .then((res) => {
+                toast({
+                    title: "Message sent successfully!",
+                    description:
+                        "Admin will look up your message and contact you.",
+                })
+                setMessage("")
+            })
+    }
+
     return (
         <footer className="absolute w-full top-full">
             <div className="container border-t bg-background flex flex-col flex-wrap items-center justify-center py-8 mx-auto md:items-center lg:items-start md:flex-row md:flex-nowrap">
@@ -91,10 +126,11 @@ export const Footer = () => {
                         <h2 className="font-semibold">Feedback</h2>
                         <div className="flex gap-2 mt-2">
                             <Input
-                                disabled
+                                value={message}
+                                onChange={(e) => setMessage(e.target.value)}
                                 placeholder="Your feedback here.."
                             />
-                            <Button disabled>Submit</Button>
+                            <Button onClick={handleSubmit}>Submit</Button>
                         </div>
                     </div>
                 </div>
