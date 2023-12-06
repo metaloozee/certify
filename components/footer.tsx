@@ -1,9 +1,8 @@
 import Link from "next/link"
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import SendMessage from "@/components/send-message"
 import { createServerSupabaseClient } from "@/app/supabase-server"
-
-import SendMessage from "./send-message"
 
 export const Footer = async () => {
     const supabase = await createServerSupabaseClient()
