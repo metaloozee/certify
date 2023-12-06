@@ -3,7 +3,7 @@ import { ChangeEvent, useEffect, useState } from "react"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
-import { toast } from "@/components/ui/use-toast"
+import { Slider } from "@/components/ui/slider"
 import { EventData } from "@/components/event-card"
 
 export const CanvasImage = ({
@@ -13,6 +13,8 @@ export const CanvasImage = ({
     setCords,
     setTemplateFile,
     event,
+    templateFontSize,
+    setTemplateFontSize,
 }: {
     template: HTMLImageElement | null
     setTemplate: any
@@ -20,28 +22,19 @@ export const CanvasImage = ({
     setCords: any
     setTemplateFile: any
     event: EventData
+    templateFontSize: number
+    setTemplateFontSize: any
 }) => {
     useEffect(() => {
         const Canvas: any = document.getElementById("canvas")
-        const ctx = Canvas.getContext("2d")
-        ctx.font = "20px Arial"
-
-        ctx.fillStyle = "#ffffff"
         if (template) {
-            if (template.width <= 1920) {
-                drawImageOnCanvas(Canvas)
-                fillText(Canvas)
-            } else {
-                setTemplate(null)
-                setTemplateFile(null)
-                toast({
-                    title: "Template Error!",
-                    variant: "destructive",
-                    description:
-                        "The template width exceeds 1920 pixels limit.",
-                })
-            }
+            drawImageOnCanvas(Canvas)
+            fillText(Canvas)
         } else {
+            const ctx = Canvas.getContext("2d")
+            ctx.font = "20px Arial"
+
+            ctx.fillStyle = "#ffffff"
             ctx.fillText(
                 "Please Upload A Template",
                 Canvas.width / 3,
@@ -95,7 +88,7 @@ export const CanvasImage = ({
         const ctx = canvas?.getContext("2d")
         if (ctx) {
             ctx.fillStyle = "#000000"
-            ctx.font = "30px Arial"
+            ctx.font = `"${templateFontSize}px Arial`
             ctx.fillText("Your name here", cords[0][0], cords[0][1])
             ctx.fillText("TYIF", cords[1][0], cords[1][1])
             ctx.fillText(event.date ?? "2005/04/18", cords[2][0], cords[2][1])
@@ -110,7 +103,7 @@ export const CanvasImage = ({
             const ctx = canvas.getContext("2d")
 
             if (ctx) {
-                ctx.font = "25px Arial"
+                ctx.font = `${templateFontSize}px Arial`
 
                 const rect = canvas.getBoundingClientRect()
                 const x = e.clientX - rect.left
@@ -131,11 +124,8 @@ export const CanvasImage = ({
                 type="file"
                 id="template"
             />
-            <p className="ml-2 mt-1 text-xs text-slate-500">
-                Image width should be between 700 to 1920 pixels
-            </p>
             <div>
-                <RadioGroup className="flex mt-5" defaultValue="name">
+                <RadioGroup className="flex mt-5 mb-5" defaultValue="name">
                     <div className="flex items-center space-x-2">
                         <RadioGroupItem
                             onClick={() => setStatus(0)}
@@ -177,21 +167,25 @@ export const CanvasImage = ({
                         <Label htmlFor="position">Position</Label>
                     </div>
                 </RadioGroup>
+                <Label className="text-lg" htmlFor="slider">
+                    Font Size: {templateFontSize}
+                </Label>
+                <Slider
+                    onValueChange={(e) => setTemplateFontSize(e[0])}
+                    defaultValue={[20]}
+                    max={100}
+                    min={10}
+                    step={1}
+                    id="slider"
+                    className="mt-2 max-w-md"
+                />
 
                 <canvas
                     style={{ border: "1px solid white" }}
                     className="my-10"
                     id="canvas"
-                    width={
-                        template && template.width <= 1920
-                            ? template.width
-                            : "720"
-                    }
-                    height={
-                        template && template.width <= 1920
-                            ? template.height
-                            : "480"
-                    }
+                    width={template ? template.width : "720"}
+                    height={template ? template.height : "480"}
                     onClick={(e) => handleClick(e)}
                 ></canvas>
             </div>

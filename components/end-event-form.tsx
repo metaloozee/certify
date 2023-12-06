@@ -29,6 +29,7 @@ interface RequestFormat {
     eventname_cords: number[]
     date_cords: number[]
     postion_cords: number[]
+    fontSize: number
     template_url: string
     token: string | undefined
 }
@@ -50,6 +51,7 @@ export const EndEventForm = ({ event }: { event: EventData }) => {
         [-1, -1], // event
         [-1, -1], // position
     ])
+    const [templateFontSize, setTemplateFontSize] = useState<number>(20)
 
     const sendGenerationRequest = async () => {
         const path = templateFile
@@ -72,10 +74,11 @@ export const EndEventForm = ({ event }: { event: EventData }) => {
                 event_id: event.id,
                 name_cords: cords[0],
                 class_cords: cords[1],
-                eventname_cords: cords[2],
-                date_cords: cords[3],
+                date_cords: cords[2],
+                eventname_cords: cords[3],
                 postion_cords: cords[4],
                 template_url: template_url,
+                fontSize: templateFontSize,
                 token: env.NEXT_PUBLIC_REQUEST_TOKEN,
             }
 
@@ -137,6 +140,8 @@ export const EndEventForm = ({ event }: { event: EventData }) => {
                     setCords={setCords}
                     setTemplateFile={setTemplateFile}
                     event={event}
+                    templateFontSize={templateFontSize}
+                    setTemplateFontSize={setTemplateFontSize}
                 />
             </div>
             <div className="w-full flex justify-center">

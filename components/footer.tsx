@@ -1,10 +1,12 @@
 import Link from "next/link"
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
+import SendMessage from "@/components/send-message"
+import { createServerSupabaseClient } from "@/app/supabase-server"
 
-export const Footer = () => {
+export const Footer = async () => {
+    const supabase = await createServerSupabaseClient()
+    const { data: session } = await supabase.auth.getSession()
     return (
         <footer className="absolute w-full top-full">
             <div className="container border-t bg-background flex flex-col flex-wrap items-center justify-center py-8 mx-auto md:items-center lg:items-start md:flex-row md:flex-nowrap">
@@ -86,16 +88,11 @@ export const Footer = () => {
                             </Link>
                         </div>
                     </div>
-
                     <div className="w-full px-4 mt-6 lg:mt-0 lg:w-2/3 md:w-1/2">
-                        <h2 className="font-semibold">Feedback</h2>
-                        <div className="flex gap-2 mt-2">
-                            <Input
-                                disabled
-                                placeholder="Your feedback here.."
-                            />
-                            <Button disabled>Submit</Button>
-                        </div>
+                        <h2 className="font-semibold">
+                            Leave a message for admin
+                        </h2>
+                        <SendMessage session={session.session} />
                     </div>
                 </div>
             </div>

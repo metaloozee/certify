@@ -10,11 +10,15 @@ export const TemplateConfigForm = ({
     setCords,
     setTemplateFile,
     event,
+    templateFontSize,
+    setTemplateFontSize,
 }: {
     cords: number[][]
     setCords: any
     setTemplateFile: any
     event: EventData
+    templateFontSize: number
+    setTemplateFontSize: any
 }) => {
     const [template, setTemplate] = useState<HTMLImageElement | null>(null)
 
@@ -28,6 +32,8 @@ export const TemplateConfigForm = ({
                     setCords={setCords}
                     setTemplateFile={setTemplateFile}
                     event={event}
+                    templateFontSize={templateFontSize}
+                    setTemplateFontSize={setTemplateFontSize}
                 />
             </div>
         </div>
