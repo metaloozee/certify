@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useState } from "react"
 import { Session } from "@supabase/supabase-js"
 
 import { Button } from "@/components/ui/button"
