@@ -27,17 +27,20 @@ export const CanvasImage = ({
 }) => {
     useEffect(() => {
         const Canvas: any = document.getElementById("canvas")
-        const ctx = Canvas.getContext("2d")
-        ctx.font = "20px Arial"
+        if (template) {
+            drawImageOnCanvas(Canvas)
+            fillText(Canvas)
+        } else {
+            const ctx = Canvas.getContext("2d")
+            ctx.font = "20px Arial"
 
-        ctx.fillStyle = "#ffffff"
-        drawImageOnCanvas(Canvas)
-        fillText(Canvas)
-        ctx.fillText(
-            "Please Upload A Template",
-            Canvas.width / 3,
-            Canvas.height / 2
-        )
+            ctx.fillStyle = "#ffffff"
+            ctx.fillText(
+                "Please Upload A Template",
+                Canvas.width / 3,
+                Canvas.height / 2
+            )
+        }
     }, [template])
 
     const [status, setStatus] = useState(0)
