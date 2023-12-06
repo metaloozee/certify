@@ -1,8 +1,10 @@
 import { MessageCircleIcon } from "lucide-react"
 
 import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
 import {
     Card,
+    CardContent,
     CardDescription,
     CardHeader,
     CardTitle,
@@ -14,7 +16,7 @@ import {
     SheetTitle,
     SheetTrigger,
 } from "@/components/ui/sheet"
-import DeleteMessageButton from "@/components/delete-message"
+import { DeleteMessageButton } from "@/components/delete-message"
 import { createServerSupabaseClient } from "@/app/supabase-server"
 
 export interface Message {
@@ -29,7 +31,7 @@ export interface Message {
     } | null
 }
 
-const AdminMessages = async () => {
+export const AdminMessages = async () => {
     const supabase = await createServerSupabaseClient()
     const { data } = await supabase.from("messages").select(`
     id,
@@ -39,45 +41,60 @@ const AdminMessages = async () => {
         first_name,
         last_name,
         enrollment,
-        class
+        class,
+        id
     )
     `)
 
     return data && data.length > 0 ? (
         <Sheet>
             <SheetTrigger>
-                <MessageCircleIcon />
+                <Button
+                    suppressHydrationWarning
+                    className="rounded-full"
+                    variant={"outline"}
+                    size={"icon"}
+                >
+                    <MessageCircleIcon className="w-5 h-5" />
+                </Button>
             </SheetTrigger>
             <SheetContent className="overflow-auto">
                 <SheetHeader>
                     <SheetTitle>Messages</SheetTitle>
                 </SheetHeader>
 
-                {data.map((message) => (
-                    <Card className="w-full  flex flex-col justify-between my-5">
+                {data.map((message, index) => (
+                    <Card
+                        key={index}
+                        className="w-full flex flex-col justify-between my-5"
+                    >
                         <CardHeader>
-                            <CardTitle className="flex items-center w-full">
-                                {message.student?.first_name}{" "}
-                                {message.student?.last_name}
-                            </CardTitle>
-                            <div className="flex">
-                                <Badge className="mr-2" variant={"outline"}>
-                                    {message.student?.class}
-                                </Badge>
-                                <Badge variant={"outline"}>
-                                    {message.created_at.split("T")[0]}
-                                </Badge>
+                            <CardDescription
+                                suppressHydrationWarning
+                                className="flex flex-wrap flex-row justify-between gap-5"
+                            >
+                                <div className="space-y-2">
+                                    <div className="flex gap-2">
+                                        <h1 className="font-medium text-foreground">
+                                            {message.student?.first_name}{" "}
+                                            {message.student?.last_name}
+                                        </h1>
+                                        <Badge variant={"outline"}>
+                                            <p className="text-xs font-light text-muted-foreground">
+                                                {message.student?.enrollment}
+                                            </p>
+                                        </Badge>
+                                    </div>
+                                    <p>{message.content}</p>
+                                </div>
                                 <DeleteMessageButton message={message} />
-                            </div>
-                            <CardDescription>{message.content}</CardDescription>
+                            </CardDescription>
                         </CardHeader>
                     </Card>
                 ))}
             </SheetContent>
         </Sheet>
     ) : (
-        <h1>No new messages</h1>
+        <></>
     )
 }
-
-export default AdminMessages

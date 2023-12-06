@@ -9,7 +9,7 @@ import { toast } from "@/components/ui/use-toast"
 import { Message } from "@/components/admin-messages"
 import { useSupabase } from "@/app/supabase-provider"
 
-const DeleteMessageButton = ({ message }: { message: Message }) => {
+export const DeleteMessageButton = ({ message }: { message: Message }) => {
     const { supabase } = useSupabase()
     const router = useRouter()
     const handleDelete = async () => {
@@ -31,10 +31,13 @@ const DeleteMessageButton = ({ message }: { message: Message }) => {
         }
     }
     return (
-        <Button variant={"outline"} onClick={handleDelete} className="mx-2">
+        <Button
+            variant={"outline"}
+            onClick={handleDelete}
+            className="rounded-full"
+            size={"icon"}
+        >
             <TrashIcon className="text-red-500 h-4 w-4 float-right" />
         </Button>
     )
 }
-
-export default DeleteMessageButton

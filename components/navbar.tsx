@@ -1,6 +1,6 @@
 import Link from "next/link"
 
-import AdminMessages from "@/components/admin-messages"
+import { AdminMessages } from "@/components/admin-messages"
 import { ModeToggle } from "@/components/toggle-mode"
 import { UserAccount } from "@/components/user-btn"
 import { createServerSupabaseClient } from "@/app/supabase-server"
@@ -23,8 +23,8 @@ export const Navbar = async () => {
                 </div>
 
                 <div className="flex flex-1 items-center justify-end">
-                    <nav className="flex items-center justify-center gap-8">
-                        {id && <AdminMessages />}
+                    <nav className="flex items-center justify-center gap-5">
+                        <AdminMessages />
                         <ModeToggle />
                         <UserAccount user={user.user} />
                     </nav>
