@@ -65,7 +65,7 @@ const AdminMessages = async () => {
                                     {message.student?.class}
                                 </Badge>
                                 <Badge variant={"outline"}>
-                                    {message.created_at}
+                                    {message.created_at.split("T")[0]}
                                 </Badge>
                                 <DeleteMessageButton message={message} />
                             </div>

@@ -12,22 +12,49 @@ const SendMessage = ({ session }: { session: Session | null }) => {
     const { supabase } = useSupabase()
 
     const [message, setMessage] = useState<string>("")
+    const sendMessage = () => {
+        supabase
+            .from("messages")
+            .insert({
+                from: session?.user.id,
+                content: message,
+            })
+            .then((res) => {
+                toast({
+                    title: "Message sent successfully!",
+                    description:
+                        "Admin will look up your message and contact you.",
+                })
+                setMessage("")
+            })
+    }
 
     const handleSubmit = () => {
         if (session) {
             supabase
                 .from("messages")
-                .insert({
-                    from: session.user.id,
-                    content: message,
-                })
+                .select("created_at")
+                .eq("from", session.user.id)
+                .order("created_at")
                 .then((res) => {
-                    toast({
-                        title: "Message sent successfully!",
-                        description:
-                            "Admin will look up your message and contact you.",
-                    })
-                    setMessage("")
+                    if (res.data && res.data.length > 0) {
+                        const latest_message: any = new Date(
+                            res.data?.reverse()[0].created_at ?? ""
+                        )
+                        const current: any = new Date()
+                        const interval =
+                            (current - latest_message) / (1000 * 60 * 60)
+
+                        if (interval < 3) {
+                            return toast({
+                                title: "Timeout!",
+                                description:
+                                    "You can only send a message once every 3 hours...",
+                            })
+                        }
+                    }
+
+                    sendMessage()
                 })
         } else {
             return toast({
