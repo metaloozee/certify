@@ -42,7 +42,7 @@ export const UserAccount = ({ user }: { user: User | null }) => {
             <DropdownMenuTrigger asChild>
                 <Button
                     variant={"ghost"}
-                    className="relative h-8 w-8 rounded-full"
+                    className="ml-1 relative h-8 w-8 rounded-full"
                 >
                     <Avatar>
                         <AvatarImage src={user.user_metadata.avatar_url} />
