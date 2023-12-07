@@ -48,7 +48,7 @@ export const AdminMessages = async () => {
 
     return data && data.length > 0 ? (
         <Sheet>
-            <SheetTrigger>
+            <SheetTrigger asChild suppressHydrationWarning>
                 <Button
                     suppressHydrationWarning
                     className="rounded-full"
