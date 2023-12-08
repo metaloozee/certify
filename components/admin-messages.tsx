@@ -6,6 +6,7 @@ import {
     Card,
     CardContent,
     CardDescription,
+    CardFooter,
     CardHeader,
     CardTitle,
 } from "@/components/ui/card"
@@ -64,32 +65,43 @@ export const AdminMessages = async () => {
                 </SheetHeader>
 
                 {data.map((message, index) => (
-                    <Card
-                        key={index}
-                        className="w-full flex flex-col justify-between my-5"
-                    >
+                    <Card key={index} className="w-full my-5">
                         <CardHeader>
                             <CardDescription
                                 suppressHydrationWarning
-                                className="flex flex-wrap flex-row justify-between gap-5"
+                                className="grid grid-row-2 content-between gap-5"
                             >
                                 <div className="space-y-2">
-                                    <div className="flex gap-2">
-                                        <h1 className="font-medium text-foreground">
-                                            {message.student?.first_name}{" "}
-                                            {message.student?.last_name}
-                                        </h1>
-                                        <Badge variant={"outline"}>
-                                            <p className="text-xs font-light text-muted-foreground">
-                                                {message.student?.enrollment}
-                                            </p>
-                                        </Badge>
+                                    <div className="flex items-center justify-between">
+                                        <div className="flex row gap-2">
+                                            <h1 className="font-medium text-foreground">
+                                                {message.student?.first_name}{" "}
+                                                {message.student?.last_name}
+                                            </h1>
+                                            <Badge variant={"outline"}>
+                                                <p className="text-xs font-light text-muted-foreground">
+                                                    {
+                                                        message.student
+                                                            ?.enrollment
+                                                    }
+                                                </p>
+                                            </Badge>
+                                        </div>
+                                        <DeleteMessageButton
+                                            message={message}
+                                        />
                                     </div>
                                     <p>{message.content}</p>
                                 </div>
-                                <DeleteMessageButton message={message} />
                             </CardDescription>
                         </CardHeader>
+                        <CardFooter>
+                            <p className="text-muted-foreground/50 text-xs">
+                                {new Date(message.created_at)
+                                    .toUTCString()
+                                    .slice(0, 17)}
+                            </p>
+                        </CardFooter>
                     </Card>
                 ))}
             </SheetContent>

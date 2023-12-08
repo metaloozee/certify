@@ -31,13 +31,8 @@ export const DeleteMessageButton = ({ message }: { message: Message }) => {
         }
     }
     return (
-        <Button
-            variant={"outline"}
-            onClick={handleDelete}
-            className="rounded-full"
-            size={"icon"}
-        >
-            <TrashIcon className="text-red-500 h-4 w-4 float-right" />
+        <Button variant={"ghost"} onClick={handleDelete} size={"icon"}>
+            <TrashIcon className="text-red-500 h-3 w-3" />
         </Button>
     )
 }
