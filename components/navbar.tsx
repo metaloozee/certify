@@ -13,6 +13,7 @@ export const Navbar = async () => {
         .select("*")
         .eq("id", user.user?.id ?? "")
         .single()
+
     return user ? (
         <header className="top-0 z-40 w-full border-b bg-background">
             <div className="container flex h-16 items-center space-x-4 sm:justify-between sm:space-x-0">
@@ -24,7 +25,7 @@ export const Navbar = async () => {
 
                 <div className="flex flex-1 items-center justify-end">
                     <nav className="flex items-center justify-center gap-5">
-                        <AdminMessages />
+                        {id && <AdminMessages />}
                         <ModeToggle />
                         <UserAccount user={user.user} />
                     </nav>

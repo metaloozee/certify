@@ -64,7 +64,7 @@ export const AdminMessages = async () => {
                     <SheetTitle>Messages</SheetTitle>
                 </SheetHeader>
 
-                {data.map((message, index) => (
+                {data.reverse().map((message, index) => (
                     <Card key={index} className="w-full my-5">
                         <CardHeader>
                             <CardDescription
