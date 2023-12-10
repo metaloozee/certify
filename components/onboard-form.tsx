@@ -7,15 +7,17 @@ import type { Session } from "@supabase/auth-helpers-nextjs"
 
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { Button } from "@/components/ui/button"
-import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuRadioGroup,
-    DropdownMenuRadioItem,
-    DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import {
+    Select,
+    SelectContent,
+    SelectGroup,
+    SelectItem,
+    SelectLabel,
+    SelectTrigger,
+    SelectValue,
+} from "@/components/ui/select"
 import { useSupabase } from "@/app/supabase-provider"
 
 export const OnboardingForm = ({ session }: { session: Session | null }) => {
@@ -75,7 +77,7 @@ export const OnboardingForm = ({ session }: { session: Session | null }) => {
                 }
 
                 setSuccess(true)
-                router.refresh()
+                router.push("/")
             } else {
                 throw new Error("Please enter valid inputs")
             }
@@ -90,6 +92,9 @@ export const OnboardingForm = ({ session }: { session: Session | null }) => {
 
     return (
         <div className="mt-10 container max-w-lg">
+            <h1 className="text-3xl text-center font-bold mb-5">
+                Setup your account
+            </h1>
             <form onSubmit={handleSubmit} className="space-y-8">
                 <div className="flex gap-5">
                     <div className="space-y-2 w-full">
@@ -124,62 +129,53 @@ export const OnboardingForm = ({ session }: { session: Session | null }) => {
                         value={enroll ?? ""}
                     />
                 </div>
+
                 <div className="flex gap-5">
-                    <div className="space-x-2">
-                        <Label htmlFor="branch">Branch</Label>
-                        <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                                <Button variant="outline">Open</Button>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent className="w-56">
-                                <DropdownMenuRadioGroup
-                                    value={branch}
-                                    onValueChange={setBranch}
-                                >
-                                    <DropdownMenuRadioItem value="IF">
-                                        IF
-                                    </DropdownMenuRadioItem>
-                                    <DropdownMenuRadioItem value="EJ">
-                                        EJ
-                                    </DropdownMenuRadioItem>
-                                    <DropdownMenuRadioItem value="ME">
-                                        ME
-                                    </DropdownMenuRadioItem>
-                                    <DropdownMenuRadioItem value="CO">
-                                        CO
-                                    </DropdownMenuRadioItem>
-                                    <DropdownMenuRadioItem value="CE">
-                                        CE
-                                    </DropdownMenuRadioItem>
-                                </DropdownMenuRadioGroup>
-                            </DropdownMenuContent>
-                        </DropdownMenu>
-                    </div>
                     <div className="flex gap-5">
-                        <div className="space-x-2">
-                            <Label htmlFor="year">Year</Label>
-                            <DropdownMenu>
-                                <DropdownMenuTrigger asChild>
-                                    <Button variant="outline">Open</Button>
-                                </DropdownMenuTrigger>
-                                <DropdownMenuContent className="w-56">
-                                    <DropdownMenuRadioGroup
-                                        value={year}
-                                        onValueChange={setYear}
-                                    >
-                                        <DropdownMenuRadioItem value="FY">
-                                            FY
-                                        </DropdownMenuRadioItem>
-                                        <DropdownMenuRadioItem value="SY">
-                                            SY
-                                        </DropdownMenuRadioItem>
-                                        <DropdownMenuRadioItem value="TY">
-                                            TY
-                                        </DropdownMenuRadioItem>
-                                    </DropdownMenuRadioGroup>
-                                </DropdownMenuContent>
-                            </DropdownMenu>
+                        <div className="space-x-2 flex items-center justify-center">
+                            <Label>Year:</Label>
+                            <Select onValueChange={(e) => setYear(e as string)}>
+                                <SelectTrigger>
+                                    <SelectValue placeholder={year} />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectGroup>
+                                        <SelectLabel>Branch</SelectLabel>
+                                        <SelectItem value="FY">FY</SelectItem>
+                                        <SelectItem value="SY">SY</SelectItem>
+                                        <SelectItem value="TY">TY</SelectItem>
+                                    </SelectGroup>
+                                </SelectContent>
+                            </Select>
                         </div>
+                    </div>
+                    <div className="space-x-2 flex items-center justify-center">
+                        <Label>Branch: </Label>
+                        <Select onValueChange={(e) => setBranch(e as string)}>
+                            <SelectTrigger>
+                                <SelectValue placeholder={branch} />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectGroup>
+                                    <SelectLabel>Branch</SelectLabel>
+                                    <SelectItem value="IF">
+                                        Information Technology
+                                    </SelectItem>
+                                    <SelectItem value="ME">
+                                        Mechanical Engineering
+                                    </SelectItem>
+                                    <SelectItem value="CO">
+                                        Computer Engineering
+                                    </SelectItem>
+                                    <SelectItem value="EJ">
+                                        Electrical Engineering
+                                    </SelectItem>
+                                    <SelectItem value="CE">
+                                        Civil Engineering
+                                    </SelectItem>
+                                </SelectGroup>
+                            </SelectContent>
+                        </Select>
                     </div>
                 </div>
 
