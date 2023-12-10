@@ -73,8 +73,6 @@ export const EditProfileForm = ({
                 enroll.length > 0 &&
                 enroll.trim() !== ""
             ) {
-                // Adding the user
-
                 const { data } = await supabase
                     .from("student")
                     .select("class, is_edited")
