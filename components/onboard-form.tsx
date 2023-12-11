@@ -42,9 +42,15 @@ export const OnboardingForm = ({ session }: { session: Session | null }) => {
             setLoading(true)
 
             if (
-                (fname && fname.length > 0) ||
-                (lname && lname.length > 0) ||
-                (enroll && enroll.length > 0)
+                fname &&
+                fname.length > 0 &&
+                fname.trim() !== "" &&
+                lname &&
+                lname.length > 0 &&
+                lname.trim() !== "" &&
+                enroll &&
+                enroll.length > 0 &&
+                enroll.trim() !== ""
             ) {
                 // Checking if existing user with the same enrollment number exists or not
                 const { data: existingUser, error: existingUserError } =
