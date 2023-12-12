@@ -1,3 +1,4 @@
+import { AuthError } from "@/components/authentication-error"
 import { OnboardingForm } from "@/components/onboard-form"
 import { createServerSupabaseClient } from "@/app/supabase-server"
 
@@ -16,7 +17,7 @@ export default async function OnBoardPage() {
             .single()
 
         if (error) {
-            throw new Error(error.message)
+            return <AuthError />
         }
 
         if (data.enrollment == null) {
