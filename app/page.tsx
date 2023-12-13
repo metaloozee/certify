@@ -4,7 +4,11 @@ import { createServerSupabaseClient } from "@/app/supabase-server"
 export default async function Index() {
     const supabase = await createServerSupabaseClient()
 
-    const { data } = await supabase.from("event").select("*").eq("isopen", true)
+    const { data } = await supabase
+        .from("event")
+        .select("*")
+        .eq("isopen", true)
+        .order("date")
 
     return data && data.length > 0 ? (
         <div className="flex flex-col justify-center items-center gap-10">
@@ -12,7 +16,7 @@ export default async function Index() {
                 Upcoming Competitions
             </h1>
             <div className="container grid grid-cols-1 md:grid-cols-3 gap-5">
-                {data.reverse().map((d) => (
+                {data.map((d) => (
                     <EventCard key={d.id} data={d} />
                 ))}
             </div>
