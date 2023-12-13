@@ -88,12 +88,8 @@ export const EventCard = async ({ data }: { data: EventData }) => {
                             </PopoverTrigger>
                             <PopoverContent>
                                 <div className="grid gap-4">
-                                    <h4>Group Name</h4>
-                                    <p className="text-slate-300 text-sm">
-                                        {groups.group?.name}
-                                    </p>
-                                    <h4>Group Members</h4>
-                                    <div className="space-y-2">
+                                    <div className="space-y-1">
+                                        <h4>{groups.group?.name}</h4>
                                         {groupMembers?.map((member) => (
                                             <p
                                                 className="text-slate-300 text-sm"
