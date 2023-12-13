@@ -20,11 +20,7 @@ export async function middleware(req: NextRequest) {
             .eq("id", user.id)
             .single()
 
-        if (studentError) {
-            throw new Error(studentError.message)
-        }
-
-        if (!studentData || studentData.enrollment === null) {
+        if (!studentData || studentData.enrollment === null || studentError) {
             return NextResponse.redirect(new URL("/welcome", req.url))
         }
     }

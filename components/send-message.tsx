@@ -9,7 +9,13 @@ import { Input } from "@/components/ui/input"
 import { toast } from "@/components/ui/use-toast"
 import { useSupabase } from "@/app/supabase-provider"
 
-const SendMessage = ({ session }: { session: Session | null }) => {
+const SendMessage = ({
+    session,
+    enrollment,
+}: {
+    session: Session | null
+    enrollment: string | null
+}) => {
     const { supabase } = useSupabase()
     const router = useRouter()
 
@@ -21,7 +27,7 @@ const SendMessage = ({ session }: { session: Session | null }) => {
                 from: session?.user.id,
                 content: message,
             })
-            .then((res) => {
+            .then(() => {
                 toast({
                     title: "Message sent successfully!",
                     description:
@@ -35,7 +41,7 @@ const SendMessage = ({ session }: { session: Session | null }) => {
         e.preventDefault()
 
         try {
-            if (session) {
+            if (session && enrollment) {
                 await supabase
                     .from("messages")
                     .select("created_at")
@@ -63,7 +69,7 @@ const SendMessage = ({ session }: { session: Session | null }) => {
                     })
             } else {
                 return toast({
-                    title: "Please login first...",
+                    title: "Please login or setup your account first...",
                     variant: "destructive",
                 })
             }
@@ -81,7 +87,12 @@ const SendMessage = ({ session }: { session: Session | null }) => {
                 onChange={(e) => setMessage(e.target.value)}
                 placeholder="Please remove me from Solo quiz competition..."
             />
-            <Button onClick={handleSubmit}>Submit</Button>
+            <Button
+                disabled={message && message.trim().length > 0 ? false : true}
+                onClick={handleSubmit}
+            >
+                Submit
+            </Button>
         </div>
     )
 }

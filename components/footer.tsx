@@ -7,6 +7,12 @@ import { createServerSupabaseClient } from "@/app/supabase-server"
 export const Footer = async () => {
     const supabase = await createServerSupabaseClient()
     const { data: session } = await supabase.auth.getSession()
+    const { data } = await supabase
+        .from("student")
+        .select("enrollment")
+        .eq("id", session.session?.user.id ?? "")
+        .maybeSingle()
+
     return (
         <footer className="absolute w-full top-full">
             <div className="container border-t bg-background flex flex-col flex-wrap items-center justify-center py-8 mx-auto md:items-center lg:items-start md:flex-row md:flex-nowrap">
@@ -92,7 +98,10 @@ export const Footer = async () => {
                         <h2 className="font-semibold">
                             Leave a message for admin
                         </h2>
-                        <SendMessage session={session.session} />
+                        <SendMessage
+                            session={session.session}
+                            enrollment={data ? data.enrollment : null}
+                        />
                     </div>
                 </div>
             </div>
