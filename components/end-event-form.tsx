@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation"
 import { env } from "@/env.mjs"
 import { ArrowBottomRightIcon } from "@radix-ui/react-icons"
 import axios from "axios"
-import { Loader2 } from "lucide-react"
+import { CircleIcon, Loader2 } from "lucide-react"
 
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { Button } from "@/components/ui/button"
@@ -17,6 +17,7 @@ import {
     DialogTitle,
     DialogTrigger,
 } from "@/components/ui/dialog"
+import { toast } from "@/components/ui/use-toast"
 import type { EventData } from "@/components/event-card"
 import { TemplateConfigForm } from "@/components/template-config"
 import { downloadCertificates } from "@/components/utils"
@@ -32,6 +33,7 @@ interface RequestFormat {
     fontSize: number
     template_url: string
     token: string | undefined
+    test: boolean
 }
 
 export const EndEventForm = ({ event }: { event: EventData }) => {
@@ -53,7 +55,7 @@ export const EndEventForm = ({ event }: { event: EventData }) => {
     ])
     const [templateFontSize, setTemplateFontSize] = useState<number>(20)
 
-    const sendGenerationRequest = async () => {
+    const sendGenerationRequest = async (test: boolean = false) => {
         const path = templateFile
             ? (
                   await supabase.storage
@@ -80,8 +82,8 @@ export const EndEventForm = ({ event }: { event: EventData }) => {
                 template_url: template_url,
                 fontSize: templateFontSize,
                 token: env.NEXT_PUBLIC_REQUEST_TOKEN,
+                test: test,
             }
-
             const response = await axios.post(
                 "https://legit9.pythonanywhere.com/certify/generateCertificates/",
                 data
@@ -129,6 +131,23 @@ export const EndEventForm = ({ event }: { event: EventData }) => {
         }
     }
 
+    const handleTest = async () => {
+        setLoading(true)
+        const requestSuccess = await sendGenerationRequest(true)
+        if (requestSuccess) {
+            await downloadCertificates(supabase, event, true)
+            supabase.storage.from("certificates").remove([`${event.id}.png`])
+        } else {
+            toast({
+                title: "An error occured while generating test certificate!",
+                description:
+                    "Please check whether you have added your template...",
+                variant: "destructive",
+            })
+        }
+        setLoading(false)
+    }
+
     return resultDeclared ? (
         <div>
             <div className="container ">
@@ -145,6 +164,18 @@ export const EndEventForm = ({ event }: { event: EventData }) => {
                 />
             </div>
             <div className="w-full flex justify-center">
+                <Button
+                    disabled={loading}
+                    onClick={handleTest}
+                    className={!loading ? "mr-2" : "mr-2 animate-bounce"}
+                    variant={"link"}
+                >
+                    {!loading ? (
+                        "Generate test certificate (recommended)"
+                    ) : (
+                        <CircleIcon></CircleIcon>
+                    )}
+                </Button>
                 <Dialog>
                     <DialogTrigger>
                         <Button
@@ -152,7 +183,6 @@ export const EndEventForm = ({ event }: { event: EventData }) => {
                                 setFalseRequest(false)
                             }}
                             className="w-full"
-                            variant={"secondary"}
                         >
                             End Event and Generate Certificates
                         </Button>

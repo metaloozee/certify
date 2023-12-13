@@ -4,15 +4,16 @@ import type { EventData } from "@/components/event-card"
 
 export const downloadCertificates = async (
     supabaseContext: SupabaseClient,
-    event: EventData
+    event: EventData,
+    test: boolean = false
 ) => {
     console.log("Downloading Certificates!")
     const { data, error } = await supabaseContext.storage
         .from("certificates")
-        .download(`${event.id}.zip`)
+        .download(`${event.id}.${test ? "png" : "zip"}`)
 
     if (data) {
-        const blob = data.slice(0, data.size, "application/zip")
+        const blob = test ? data : data.slice(0, data.size, "application/zip")
         const blobUrl = URL.createObjectURL(blob)
         const link = document.createElement("a")
         link.href = blobUrl
