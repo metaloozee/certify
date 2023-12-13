@@ -40,7 +40,7 @@ export const EventCard = async ({ data }: { data: EventData }) => {
         .single()
     const { data: groups, error: groupError } = await supabase
         .from("eventparticipant")
-        .select(`group!inner(id, groupmember!inner(student_id))`)
+        .select(`group!inner(id, name, groupmember!inner(student_id))`)
         .eq("group.groupmember.student_id", session?.user.id ?? "")
         .eq("event_id", event?.id ?? "")
         .maybeSingle()
@@ -88,8 +88,8 @@ export const EventCard = async ({ data }: { data: EventData }) => {
                             </PopoverTrigger>
                             <PopoverContent>
                                 <div className="grid gap-4">
-                                    <h4>Group Members</h4>
-                                    <div className="space-y-2">
+                                    <div className="space-y-1">
+                                        <h4>{groups.group?.name}</h4>
                                         {groupMembers?.map((member) => (
                                             <p
                                                 className="text-slate-300 text-sm"
