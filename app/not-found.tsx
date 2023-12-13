@@ -7,7 +7,7 @@ export default function NotFound() {
         <div className="container -mt-5 grid grid-cols-1 lg:grid-cols-2 items-center gap-5">
             <Image
                 src={Default}
-                alt="fortniter nigger"
+                alt="black commando"
                 width={720}
                 height={720}
             />
