@@ -10,12 +10,13 @@ Certify is an event management application built using Next.js, designed to stre
 </div>
 
 <p align="center">
-  <a href="#introduction"><strong>Introduction</strong></a> ·
-  <a href="#installation"><strong>Installation</strong></a> ·
   <a href="#tech-stack"><strong>Tech Stack</strong></a> ·
-  <a href="#implementation"><strong>Implementation</strong></a> ·
+  <a href="#features"><strong>Features</strong></a> ·
+  <a href="#getting-started"><strong>Installation</strong></a> ·
   <a href="#contributing"><strong>Contributing</strong></a> ·
-  <a href="#snapshots"><strong>Snapshots</strong></a>
+  <a href="#code-of-conduct"><strong>Code Of Conduct</strong></a> ·
+  <a href="#license"><strong>License</strong></a> ·
+  <a href="#acknowledgments"><strong>Acknowledgments</strong></a> ·
 </p>
 
 ## Tech Stack
@@ -71,3 +72,7 @@ This project is licensed under [GNU AFFERO GENERAL PUBLIC LICENSE](LICENSE.md)
 -   Ayan Parkar
 -   Siddique Khan
 -   Ansh Singh
+
+## Repo Activity
+
+![Certify](https://repobeats.axiom.co/api/embed/e3b76c10eda4637662c632ae5a03375b6d479f81.svg "Repobeats analytics image")
