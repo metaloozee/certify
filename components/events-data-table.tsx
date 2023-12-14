@@ -12,7 +12,7 @@ import {
     useReactTable,
     VisibilityState,
 } from "@tanstack/react-table"
-import { CheckCircle2, DownloadCloud, XCircle } from "lucide-react"
+import { CheckCircle2, DownloadCloud, Hourglass, XCircle } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import {
@@ -57,13 +57,28 @@ export const columns: ColumnDef<EventTableData>[] = [
         header: "Description",
     },
     {
+        id: "status",
+        header: "Status",
+        cell: ({ row }) => {
+            return row.original.isopen ? (
+                <span className="flex items-center text-muted-foreground">
+                    <Hourglass className="mr-2 h-4 w-4" /> Open
+                </span>
+            ) : (
+                <span className="flex items-center text-muted-foreground">
+                    <XCircle className="mr-2 h-4 w-4" /> Closed
+                </span>
+            )
+        },
+    },
+    {
         id: "branchwise",
         header: "Branchwise?",
         cell: ({ row }) => {
             return row.original.branchwise ? (
-                <CheckCircle2 className="text-green-500 ml-2 h-4 w-4" />
+                <CheckCircle2 className="text-muted-foreground ml-2 h-4 w-4" />
             ) : (
-                <XCircle className="text-red-500 ml-2 h-4 w-4" />
+                <XCircle className="text-muted-foreground ml-2 h-4 w-4" />
             )
         },
     },
