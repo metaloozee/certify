@@ -12,7 +12,13 @@ import {
     useReactTable,
     VisibilityState,
 } from "@tanstack/react-table"
-import { CheckCircle2, DownloadCloud, Hourglass, XCircle } from "lucide-react"
+import {
+    CheckCircle2,
+    DatabaseZap,
+    DownloadCloud,
+    Hourglass,
+    XCircle,
+} from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import {
@@ -53,8 +59,15 @@ export const columns: ColumnDef<EventTableData>[] = [
         header: "Event Name",
     },
     {
-        accessorKey: "description",
+        id: "description",
         header: "Description",
+        cell: ({ row }) => {
+            return (
+                <p className="text-muted-foreground">
+                    {row.original.description}
+                </p>
+            )
+        },
     },
     {
         id: "status",
@@ -89,7 +102,7 @@ export const columns: ColumnDef<EventTableData>[] = [
             return (
                 <Button variant={"secondary"} asChild>
                     <Link href={`/admin/event/${row.original.id}`}>
-                        Manage Event
+                        Manage <DatabaseZap className="ml-2 h-4 w-4" />
                     </Link>
                 </Button>
             )

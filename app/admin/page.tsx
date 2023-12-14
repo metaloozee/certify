@@ -18,15 +18,16 @@ export default async function AdminPage() {
     const { data: events } = await supabase
         .from("event")
         .select("*")
+        .order("isopen", { ascending: false })
         .order("date")
 
     return adminData ? (
-        <div className="container w-full">
+        <div className="w-full">
             <Tabs
                 defaultValue="manage-events"
                 className="flex flex-col justify-center items-center"
             >
-                <div className="tabs w-full flex justify-center">
+                <div className="tabs flex justify-center">
                     <TabsList className="my-5">
                         <TabsTrigger value="manage-events">
                             Manage Events
@@ -36,19 +37,16 @@ export default async function AdminPage() {
                         </TabsTrigger>
                     </TabsList>
                 </div>
-                <TabsContent
-                    value="manage-events"
-                    className="flex justify-center"
-                >
+                <TabsContent value="manage-events" className="container w-full">
                     {events && events.length > 0 ? (
-                        <EventDataTable data={events.reverse()} />
+                        <EventDataTable data={events} />
                     ) : (
                         <h1 className="text-center text-2xl md:text-3xl font-light">
                             No past events
                         </h1>
                     )}
                 </TabsContent>
-                <TabsContent className="max-w-xl" value="new-event">
+                <TabsContent value="new-event" className="container max-w-xl">
                     <AdminEventForm session={session} />
                 </TabsContent>
             </Tabs>
