@@ -353,9 +353,9 @@ export const AdminEventForm = ({ session }: { session: Session | null }) => {
     }
 
     return (
-        <div className="mt-10 space-y-3">
-            <h1 className="text-2xl font-bold">Create New Event</h1>
-            <form onSubmit={handleSubmit} className="w-full space-y-8">
+        <div className="space-y-3">
+            <h1 className="text-2xl font-bold text-center">Create New Event</h1>
+            <form onSubmit={handleSubmit} className="mt-5 w-full space-y-8">
                 <div className="flex flex-col md:flex-row gap-5">
                     <div className="w-full space-y-2">
                         <Label>Name</Label>

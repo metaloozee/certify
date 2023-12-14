@@ -1,48 +1,73 @@
-# Supabase Starter
+<h1 align="center">Certify - Event Management Application</h1>
+<p align="center">
+Certify is an event management application built using Next.js, designed to streamline the event lifecycle, from registration to certificate generation. This README provides an overview of the project, installation instructions, and guidelines for contributing.
+</p>
 
-This starter configures Supabase Auth to use cookies, making the user's session available throughout the entire Next.js app - Client Components, Server Components, Route Handlers, Server Actions and Middleware.
+<div align="center">
 
-## Deploy your own
+![Vercel Deploy](https://therealsujitk-vercel-badge.vercel.app/?app=certify-omega)
 
-The Vercel deployment will guide you through creating a Supabase account and project. After installation of the Supabase integration, all relevant environment variables will be set up so that the project is usable immediately after deployment 🚀
+</div>
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/vercel/next.js/tree/canary/examples/with-supabase&project-name=nextjs-with-supabase&repository-name=nextjs-with-supabase&integration-ids=oac_jUduyjQgOyzev1fjrW83NYOv)
+<p align="center">
+  <a href="#introduction"><strong>Introduction</strong></a> ·
+  <a href="#installation"><strong>Installation</strong></a> ·
+  <a href="#tech-stack"><strong>Tech Stack</strong></a> ·
+  <a href="#implementation"><strong>Implementation</strong></a> ·
+  <a href="#contributing"><strong>Contributing</strong></a> ·
+  <a href="#snapshots"><strong>Snapshots</strong></a>
+</p>
 
-## How to use
+## Tech Stack
 
-1. Create a [new Supabase project](https://database.new)
-1. Run `npx create-next-app -e with-supabase` to create a Next.js app using the Supabase Starter template
-1. Use `cd` to change into the app's directory
-1. Run `npm install` to install dependencies
-1. Rename `.env.local.example` to `.env.local` and update the values for `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY` from [your Supabase project's API settings](https://app.supabase.com/project/_/settings/api)
-1. Run `npm run dev` to start the local development server
+-   Next.js
+-   Supabase (Authentication & Database)
+-   ui/shadcn (User Interface)
 
-> Check out [the docs for Local Development](https://supabase.com/docs/guides/getting-started/local-development) to also run Supabase locally.
+## Features
 
-### Create a Supabase client
+-   Event registration and management
+-   Seamless participant communication
+-   Certificate generation for events
 
-Check out the [`/app/_examples`](./app/_examples/) folder for an example of creating a Supabase client in:
+## Getting Started
 
-- [Client Components](./app/_examples/client-component/page.tsx)
-- [Server Components](./app/_examples/server-component/page.tsx)
-- [Route Handlers](./app/_examples/route-handler/route.ts)
-- [Server Actions](./app/_examples/server-action/page.tsx)
+### Prerequisites
 
-### Create `todo` table and seed with data (optional)
+-   Node.js
+-   npm
 
-Navigate to [your project's SQL Editor](https://app.supabase.com/project/_/sql), click `New query`, paste the contents of the [init.sql](./supabase/migrations/20230618024722_init.sql) file and click `RUN`.
+### Installation
 
-This will create a basic `todos` table, enable Row Level Security (RLS), and write RLS policies enabling `select` and `insert` actions for `authenticated` users.
+1. Clone the repository:
+    ```bash
+    git clone https://github.com/metaloozee/certify.git
+    ```
+2. Install the dependencies:
+    ```bash
+    cd certify
+    pnpm install
+    ```
+3. Start the application:
+    ```bash
+    pnpm run dev
+    ```
+4. Open your browser and visit `http://localhost:3000`` to view the application.
 
-To seed your `todos` table with some dummy data, run the contents of the [seed.sql](./supabase/seed.sql) file.
+## Contributing
 
-## Feedback and issues
+We welcome contributions from the community. Before you start contributing, please make sure to read and follow our [Contributing Guidelines](CONTRIBUTING.md). This will provide you with information on the development process, coding style, testing procedures, and other important aspects of contributing to Certify.
 
-Please file feedback and issues over on the [Supabase GitHub org](https://github.com/supabase/supabase/issues/new/choose).
+## Code of Conduct
 
-## More Supabase examples
+Please adhere to our [Code of Conduct](CODE_OF_CONDUCT.md) when interacting with the project.
 
-- [Next.js Subscription Payments Starter](https://github.com/vercel/nextjs-subscription-payments)
-- [Cookie-based Auth and the Next.js 13 App Router (free course)](https://youtube.com/playlist?list=PL5S4mPUpp4OtMhpnp93EFSo42iQ40XjbF)
-- [Supabase Auth and the Next.js App Router](https://github.com/supabase/supabase/tree/master/examples/auth/nextjs)
-- [Next.js Auth Helpers Docs](https://supabase.com/docs/guides/auth/auth-helpers/nextjs)
+## License
+
+This project is licensed under [GNU AFFERO GENERAL PUBLIC LICENSE](LICENSE.md)
+
+## Acknowledgments
+
+-   Ayan Parkar
+-   Siddique Khan
+-   Ansh Singh
