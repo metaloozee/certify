@@ -37,10 +37,7 @@ export interface Database {
                     id: string
                     isopen: boolean | null
                     name: string | null
-                    runner_up: string | null
-                    second_runner_up: string | null
                     team_limit: number
-                    winner: string | null
                 }
                 Insert: {
                     branchwise?: boolean
@@ -49,10 +46,7 @@ export interface Database {
                     id?: string
                     isopen?: boolean | null
                     name?: string | null
-                    runner_up?: string | null
-                    second_runner_up?: string | null
                     team_limit?: number
-                    winner?: string | null
                 }
                 Update: {
                     branchwise?: boolean
@@ -61,34 +55,9 @@ export interface Database {
                     id?: string
                     isopen?: boolean | null
                     name?: string | null
-                    runner_up?: string | null
-                    second_runner_up?: string | null
                     team_limit?: number
-                    winner?: string | null
                 }
-                Relationships: [
-                    {
-                        foreignKeyName: "event_runner_up_fkey"
-                        columns: ["runner_up"]
-                        isOneToOne: false
-                        referencedRelation: "group"
-                        referencedColumns: ["id"]
-                    },
-                    {
-                        foreignKeyName: "event_second_runner_up_fkey"
-                        columns: ["second_runner_up"]
-                        isOneToOne: false
-                        referencedRelation: "group"
-                        referencedColumns: ["id"]
-                    },
-                    {
-                        foreignKeyName: "event_winner_fkey"
-                        columns: ["winner"]
-                        isOneToOne: false
-                        referencedRelation: "group"
-                        referencedColumns: ["id"]
-                    },
-                ]
+                Relationships: []
             }
             eventparticipant: {
                 Row: {
