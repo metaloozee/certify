@@ -1,3 +1,9 @@
+/**
+ * WARNING: This component is currently not in use and is slated for deprecation in future releases.
+ * Please refrain from relying on this functionality, as it will be removed in upcoming updates.
+ * Consider using alternative methods or consulting the documentation for recommended replacements.
+ */
+
 "use client"
 
 import { useState } from "react"

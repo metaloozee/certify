@@ -118,6 +118,11 @@ export const EventCard = async ({ data }: { data: EventData }) => {
 }
 
 export const AdminOngoingEventCard = async ({ data }: { data: EventData }) => {
+    /**
+     * WARNING: This component is currently not in use and is slated for deprecation in future releases.
+     * Please refrain from relying on this functionality, as it will be removed in upcoming updates.
+     * Consider using alternative methods or consulting the documentation for recommended replacements.
+     */
     let eventDate = new Date(data.date ?? "")
     let now = new Date()
     let timeRemaining = eventDate.getTime() - now.getTime()
