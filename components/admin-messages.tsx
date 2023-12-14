@@ -18,6 +18,7 @@ import {
     SheetTrigger,
 } from "@/components/ui/sheet"
 import { DeleteMessageButton } from "@/components/delete-message"
+import MessageTrigger from "@/components/message-trigger"
 import { createServerSupabaseClient } from "@/app/supabase-server"
 
 export interface Message {
@@ -34,10 +35,14 @@ export interface Message {
 
 export const AdminMessages = async () => {
     const supabase = await createServerSupabaseClient()
-    const { data } = await supabase.from("messages").select(`
+    const { data } = await supabase
+        .from("messages")
+        .select(
+            `
     id,
     created_at,
     content,
+    opened,
     student (
         first_name,
         last_name,
@@ -45,19 +50,16 @@ export const AdminMessages = async () => {
         class,
         id
     )
-    `)
+    `
+        )
+        .order("created_at")
 
     return data && data.length > 0 ? (
         <Sheet>
             <SheetTrigger asChild suppressHydrationWarning>
-                <Button
-                    suppressHydrationWarning
-                    className="rounded-full"
-                    variant={"outline"}
-                    size={"icon"}
-                >
-                    <MessageCircleIcon className="w-5 h-5" />
-                </Button>
+                <div>
+                    <MessageTrigger />
+                </div>
             </SheetTrigger>
             <SheetContent className="overflow-auto">
                 <SheetHeader>
@@ -74,7 +76,13 @@ export const AdminMessages = async () => {
                                 <div className="space-y-2">
                                     <div className="flex items-center justify-between">
                                         <div className="flex row gap-2">
-                                            <h1 className="font-medium text-foreground">
+                                            <h1
+                                                className={
+                                                    message.opened
+                                                        ? "font-medium text-slate-700"
+                                                        : "font-medium text-foreground"
+                                                }
+                                            >
                                                 {message.student?.first_name}{" "}
                                                 {message.student?.last_name}
                                             </h1>
@@ -91,7 +99,15 @@ export const AdminMessages = async () => {
                                             message={message}
                                         />
                                     </div>
-                                    <p>{message.content}</p>
+                                    <p
+                                        className={
+                                            message.opened
+                                                ? "font-medium text-slate-700"
+                                                : ""
+                                        }
+                                    >
+                                        {message.content}
+                                    </p>
                                 </div>
                             </CardDescription>
                         </CardHeader>
