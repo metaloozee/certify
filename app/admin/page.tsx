@@ -20,10 +20,13 @@ export default async function AdminPage() {
         .from("event")
         .select("*")
         .eq("isopen", true)
+        .order("date")
+
     const { data: pastEvents } = await supabase
         .from("event")
         .select("*")
         .eq("isopen", false)
+        .order("date")
 
     return adminData ? (
         <div className="max-w-xl">
@@ -48,14 +51,9 @@ export default async function AdminPage() {
                 >
                     {currentEvents && currentEvents.length > 0 ? (
                         <div className="flex flex-wrap justify-between items-center gap-5">
-                            {currentEvents
-                                ?.reverse()
-                                ?.map((d) => (
-                                    <AdminOngoingEventCard
-                                        key={d.id}
-                                        data={d}
-                                    />
-                                ))}
+                            {currentEvents?.map((d) => (
+                                <AdminOngoingEventCard key={d.id} data={d} />
+                            ))}
                         </div>
                     ) : (
                         <h1 className="text-center text-2xl md:text-3xl font-light">
@@ -66,9 +64,11 @@ export default async function AdminPage() {
                 <TabsContent value="past-events">
                     {pastEvents && pastEvents.length > 0 ? (
                         <div className="flex flex-wrap justify-between items-center gap-5">
-                            {pastEvents?.map((d) => (
-                                <AdminEndedEventCard key={d.id} data={d} />
-                            ))}
+                            {pastEvents
+                                ?.reverse()
+                                .map((d) => (
+                                    <AdminEndedEventCard key={d.id} data={d} />
+                                ))}
                         </div>
                     ) : (
                         <h1 className="text-center text-2xl md:text-3xl font-light">
