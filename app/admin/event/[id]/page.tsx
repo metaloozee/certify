@@ -1,7 +1,7 @@
 import { Badge } from "@/components/ui/badge"
-import { DataTable } from "@/components/data-table"
 import { DeleteButton } from "@/components/delete-button"
 import { EndEventForm } from "@/components/end-event-form"
+import { MemberDataTable } from "@/components/member-data-table"
 import { RefreshButton } from "@/components/refresh-button"
 import { createServerSupabaseClient } from "@/app/supabase-server"
 
@@ -74,7 +74,7 @@ export default async function AdminEventPage({ params }: { params: any }) {
                 </div>
 
                 <div className="mt-16">
-                    <DataTable data={eventParticipantData} />
+                    <MemberDataTable data={eventParticipantData} />
                 </div>
 
                 <div className="mt-10">

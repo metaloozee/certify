@@ -44,7 +44,6 @@ import {
     TableHeader,
     TableRow,
 } from "@/components/ui/table"
-import { ToastAction } from "@/components/ui/toast"
 import { toast, useToast } from "@/components/ui/use-toast"
 import { useSupabase } from "@/app/supabase-provider"
 
@@ -454,7 +453,7 @@ interface DataTableProps {
     data: EventParticipantData[]
 }
 
-export const DataTable = ({ data }: DataTableProps) => {
+export const MemberDataTable = ({ data }: DataTableProps) => {
     const [columnFilters, setColumnFilters] =
         React.useState<ColumnFiltersState>([])
     const [columnVisibility, setColumnVisibility] =
