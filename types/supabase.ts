@@ -233,18 +233,21 @@ export interface Database {
                     created_at: string
                     from: string | null
                     id: string
+                    opened: boolean | null
                 }
                 Insert: {
                     content?: string | null
                     created_at?: string
                     from?: string | null
                     id?: string
+                    opened?: boolean | null
                 }
                 Update: {
                     content?: string | null
                     created_at?: string
                     from?: string | null
                     id?: string
+                    opened?: boolean | null
                 }
                 Relationships: [
                     {
