@@ -1,6 +1,6 @@
 "use client"
 
-import { MessageSquare, MessageSquarePlus } from "lucide-react"
+import { MessageCircle, MessageCirclePlus } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import { toast } from "@/components/ui/use-toast"
@@ -30,15 +30,15 @@ const MessageTrigger = ({
     return (
         <Button
             suppressHydrationWarning
-            className="rounded-full "
+            className="rounded-full"
             variant={"outline"}
             size={"icon"}
             onClick={handleOpen}
         >
             {isLatestMessageOpened ? (
-                <MessageSquare className="w-5 h-5" />
+                <MessageCircle className="w-5 h-5" />
             ) : (
-                <MessageSquarePlus className="w-5 h-5 animate-pulse" />
+                <MessageCirclePlus className="w-5 h-5 animate-pulse" />
             )}
         </Button>
     )

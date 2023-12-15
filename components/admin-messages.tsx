@@ -1,4 +1,4 @@
-import { MessageCircleIcon, MessageSquareDashed } from "lucide-react"
+import { MessageCircleDashed } from "lucide-react"
 
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -136,7 +136,7 @@ export const AdminMessages = async () => {
                         <div>
                             <div>
                                 <div className="flex items-center justify-center">
-                                    <MessageSquareDashed className="flex justify-center items-center" />
+                                    <MessageCircleDashed className="flex justify-center items-center" />
                                 </div>
                                 <p className="my-4 font-light">
                                     Things are empty here...
