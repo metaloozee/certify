@@ -1,12 +1,16 @@
 "use client"
 
-import { MessageCircleIcon } from "lucide-react"
+import { MessageSquare, MessageSquarePlus } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import { toast } from "@/components/ui/use-toast"
 import { useSupabase } from "@/app/supabase-provider"
 
-const MessageTrigger = () => {
+const MessageTrigger = ({
+    isLatestMessageOpened,
+}: {
+    isLatestMessageOpened: boolean
+}) => {
     const { supabase } = useSupabase()
     const handleOpen = async () => {
         const { error } = await supabase
@@ -31,7 +35,11 @@ const MessageTrigger = () => {
             size={"icon"}
             onClick={handleOpen}
         >
-            <MessageCircleIcon className="w-5 h-5" />
+            {isLatestMessageOpened ? (
+                <MessageSquare className="w-5 h-5" />
+            ) : (
+                <MessageSquarePlus className="w-5 h-5 animate-pulse" />
+            )}
         </Button>
     )
 }
