@@ -1,4 +1,4 @@
-import { MessageCircleIcon } from "lucide-react"
+import { MessageCircleIcon, MessageSquareDashed } from "lucide-react"
 
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -25,6 +25,7 @@ export interface Message {
     id: string
     created_at: string
     content: string | null
+    opened: boolean
     student: {
         first_name: string | null
         last_name: string | null
@@ -39,26 +40,32 @@ export const AdminMessages = async () => {
         .from("messages")
         .select(
             `
-    id,
-    created_at,
-    content,
-    opened,
-    student (
-        first_name,
-        last_name,
-        enrollment,
-        class,
-        id
-    )
+            id,
+            created_at,
+            content,
+            opened,
+            student (
+                first_name,
+                last_name,
+                enrollment,
+                class,
+                id
+            )
     `
         )
         .order("created_at")
 
-    return data && data.length > 0 ? (
+    return (
         <Sheet>
             <SheetTrigger asChild suppressHydrationWarning>
                 <div>
-                    <MessageTrigger />
+                    <MessageTrigger
+                        isLatestMessageOpened={
+                            data && data.length > 0
+                                ? data.reverse()[0].opened
+                                : true
+                        }
+                    />
                 </div>
             </SheetTrigger>
             <SheetContent className="overflow-auto">
@@ -66,63 +73,79 @@ export const AdminMessages = async () => {
                     <SheetTitle>Messages</SheetTitle>
                 </SheetHeader>
 
-                {data.reverse().map((message, index) => (
-                    <Card key={index} className="w-full my-5">
-                        <CardHeader>
-                            <CardDescription
-                                suppressHydrationWarning
-                                className="grid grid-row-2 content-between gap-5"
-                            >
-                                <div className="space-y-2">
-                                    <div className="flex items-center justify-between">
-                                        <div className="flex row gap-2">
-                                            <h1
-                                                className={
-                                                    message.opened
-                                                        ? "font-medium text-slate-700"
-                                                        : "font-medium text-foreground"
-                                                }
-                                            >
-                                                {message.student?.first_name}{" "}
-                                                {message.student?.last_name}
-                                            </h1>
-                                            <Badge variant={"outline"}>
-                                                <p className="text-xs font-light text-muted-foreground">
+                {data && data.length > 0 ? (
+                    data.reverse().map((message, index) => (
+                        <Card key={index} className="w-full my-5">
+                            <CardHeader>
+                                <CardDescription
+                                    suppressHydrationWarning
+                                    className="grid grid-row-2 content-between gap-5"
+                                >
+                                    <div className="space-y-2">
+                                        <div className="flex items-center justify-between">
+                                            <div className="flex row gap-2">
+                                                <h1
+                                                    className={
+                                                        message.opened
+                                                            ? "font-medium text-slate-700"
+                                                            : "font-medium text-foreground"
+                                                    }
+                                                >
                                                     {
                                                         message.student
-                                                            ?.enrollment
-                                                    }
-                                                </p>
-                                            </Badge>
+                                                            ?.first_name
+                                                    }{" "}
+                                                    {message.student?.last_name}
+                                                </h1>
+                                                <Badge variant={"outline"}>
+                                                    <p className="text-xs font-light text-muted-foreground">
+                                                        {
+                                                            message.student
+                                                                ?.enrollment
+                                                        }
+                                                    </p>
+                                                </Badge>
+                                            </div>
+                                            <DeleteMessageButton
+                                                message={message}
+                                            />
                                         </div>
-                                        <DeleteMessageButton
-                                            message={message}
-                                        />
+                                        <p
+                                            className={
+                                                message.opened
+                                                    ? "font-medium text-slate-700"
+                                                    : ""
+                                            }
+                                        >
+                                            {message.content}
+                                        </p>
                                     </div>
-                                    <p
-                                        className={
-                                            message.opened
-                                                ? "font-medium text-slate-700"
-                                                : ""
-                                        }
-                                    >
-                                        {message.content}
-                                    </p>
+                                </CardDescription>
+                            </CardHeader>
+                            <CardFooter>
+                                <p className="text-muted-foreground/50 text-xs">
+                                    {new Date(message.created_at)
+                                        .toUTCString()
+                                        .slice(0, 17)}
+                                </p>
+                            </CardFooter>
+                        </Card>
+                    ))
+                ) : (
+                    <div className="h-full flex justify-center items-center">
+                        <div>
+                            <div>
+                                <div className="flex items-center justify-center">
+                                    <MessageSquareDashed className="flex justify-center items-center" />
                                 </div>
-                            </CardDescription>
-                        </CardHeader>
-                        <CardFooter>
-                            <p className="text-muted-foreground/50 text-xs">
-                                {new Date(message.created_at)
-                                    .toUTCString()
-                                    .slice(0, 17)}
-                            </p>
-                        </CardFooter>
-                    </Card>
-                ))}
+                                <p className="my-4 font-light">
+                                    Things are empty here...
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                )}
             </SheetContent>
         </Sheet>
-    ) : (
-        <></>
     )
 }

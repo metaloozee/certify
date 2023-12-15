@@ -202,21 +202,21 @@ export interface Database {
                     created_at: string
                     from: string | null
                     id: string
-                    opened: boolean | null
+                    opened: boolean
                 }
                 Insert: {
                     content?: string | null
                     created_at?: string
                     from?: string | null
                     id?: string
-                    opened?: boolean | null
+                    opened?: boolean
                 }
                 Update: {
                     content?: string | null
                     created_at?: string
                     from?: string | null
                     id?: string
-                    opened?: boolean | null
+                    opened?: boolean
                 }
                 Relationships: [
                     {
