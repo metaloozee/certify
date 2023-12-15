@@ -4,13 +4,8 @@
 ![Vercel Deploy](https://therealsujitk-vercel-badge.vercel.app/?app=certify-omega)
 
 </div>
-<p >
-Certify is an event management application built using Next.js, designed to streamline the event lifecycle, from registration to certificate generation. This README provides an overview of the project, installation instructions, and guidelines for contributing.
-</p>
-
-
-
 <p align="center">
+  <a href="#introduction"><strong>Introduction</strong></a> ·
   <a href="#tech-stack"><strong>Tech Stack</strong></a> ·
   <a href="#features"><strong>Features</strong></a> ·
   <a href="#getting-started"><strong>Installation</strong></a> ·
@@ -19,6 +14,15 @@ Certify is an event management application built using Next.js, designed to stre
   <a href="#license"><strong>License</strong></a> ·
   <a href="#acknowledgments"><strong>Acknowledgments</strong></a> ·
 </p>
+
+## Introduction
+<p >
+Certify is an event management application built using Next.js, designed to streamline the event lifecycle, from registration to certificate generation. This README provides an overview of the project, installation instructions, and guidelines for contributing.
+</p>
+
+
+
+
 
 ## Tech Stack
 
