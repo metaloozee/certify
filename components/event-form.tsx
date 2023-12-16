@@ -471,7 +471,7 @@ export const AdminEventForm = ({ session }: { session: Session | null }) => {
                     <RocketIcon className="h-4 w-4" />
                     <AlertTitle>Success</AlertTitle>
                     <AlertDescription>
-                        You have successfully registered yourself!
+                        Event created successfully!
                     </AlertDescription>
                 </Alert>
             ) : (

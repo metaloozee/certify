@@ -1,5 +1,6 @@
 import { Badge } from "@/components/ui/badge"
 import { DeleteButton } from "@/components/delete-button"
+import { EditEventDialog } from "@/components/edit-event-dialog"
 import { EndEventForm } from "@/components/end-event-form"
 import { MemberDataTable } from "@/components/member-data-table"
 import { RefreshButton } from "@/components/refresh-button"
@@ -57,6 +58,11 @@ export default async function AdminEventPage({ params }: { params: any }) {
                                     {eventData.date}
                                 </Badge>
                                 <Badge variant={"outline"}>
+                                    {eventData.branchwise
+                                        ? "Branchwise"
+                                        : "Not Branchwise"}
+                                </Badge>
+                                <Badge variant={"outline"}>
                                     Maximum Team Members: {eventData.team_limit}
                                 </Badge>
                             </div>
@@ -69,6 +75,7 @@ export default async function AdminEventPage({ params }: { params: any }) {
 
                     <div className="flex gap-2">
                         <RefreshButton />
+                        <EditEventDialog event={eventData} />
                         <DeleteButton event={eventData} />
                     </div>
                 </div>
