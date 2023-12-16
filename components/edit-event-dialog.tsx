@@ -77,18 +77,13 @@ export const EditEventDialog = ({ event }: { event: EventData }) => {
     }
     return (
         <Dialog>
-            <DialogTrigger>
+            <DialogTrigger suppressHydrationWarning asChild>
                 <Button variant={"outline"}>
-                    <Edit className="w-4 h-4 text-yellow-200" />
+                    <Edit className="w-4 h-4 text-yellow-500" />
                 </Button>
             </DialogTrigger>
             <DialogContent>
-                <DialogHeader></DialogHeader>
                 <div className="space-y-7">
-                    <h1 className="text-2xl font-bold text-center">
-                        Edit Event
-                    </h1>
-
                     <div className="">
                         <div className="w-full space-y-2">
                             <Label>Name</Label>

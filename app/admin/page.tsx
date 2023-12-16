@@ -42,12 +42,12 @@ export default async function AdminPage() {
                         <EventDataTable data={events} />
                     ) : (
                         <h1 className="text-center text-2xl md:text-3xl font-light">
-                            No past events
+                            No Data Found
                         </h1>
                     )}
                 </TabsContent>
                 <TabsContent value="new-event" className="container max-w-xl">
-                    <AdminEventForm session={session} />
+                    <AdminEventForm />
                 </TabsContent>
             </Tabs>
         </div>

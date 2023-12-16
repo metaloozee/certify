@@ -150,8 +150,8 @@ export const EndEventForm = ({ event }: { event: EventData }) => {
 
     return resultDeclared ? (
         <div>
-            <div className="container ">
-                <h3 className="text-xl font-light mb-10">
+            <div className="w-full">
+                <h3 className="font-bold mb-5">
                     Please upload and configure your template:
                 </h3>
                 <TemplateConfigForm
@@ -163,26 +163,24 @@ export const EndEventForm = ({ event }: { event: EventData }) => {
                     setTemplateFontSize={setTemplateFontSize}
                 />
             </div>
-            <div className="w-full flex justify-center">
+            <div className="w-full flex flex-wrap justify-between gap-2">
                 <Button
                     disabled={loading}
                     onClick={handleTest}
-                    className={!loading ? "mr-2" : "mr-2 animate-bounce"}
-                    variant={"link"}
+                    variant={"secondary"}
                 >
                     {!loading ? (
-                        "Generate test certificate (recommended)"
+                        "Generate Test Certificate"
                     ) : (
-                        <CircleIcon></CircleIcon>
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                     )}
                 </Button>
                 <Dialog>
-                    <DialogTrigger>
+                    <DialogTrigger suppressHydrationWarning asChild>
                         <Button
                             onClick={() => {
                                 setFalseRequest(false)
                             }}
-                            className="w-full"
                         >
                             End Event and Generate Certificates
                         </Button>
@@ -229,7 +227,7 @@ export const EndEventForm = ({ event }: { event: EventData }) => {
                                     <p>Download</p>
                                 )
                             ) : (
-                                <p className="animate-pulse flex">
+                                <p className="animate-pulse flex ">
                                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                                     Generating
                                 </p>
@@ -257,7 +255,7 @@ export const EndEventForm = ({ event }: { event: EventData }) => {
                 disabled={loading === !success}
                 variant={"secondary"}
             >
-                Configure Template <ArrowBottomRightIcon />
+                Configure Template <ArrowBottomRightIcon className="ml-2" />
             </Button>
 
             {error ? (
