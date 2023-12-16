@@ -118,7 +118,7 @@ export const CanvasImage = ({
     }
 
     return (
-        <div>
+        <div className="w-full">
             <Input
                 onChange={(event) => handleFile(event)}
                 type="file"
@@ -182,10 +182,10 @@ export const CanvasImage = ({
 
                 <canvas
                     style={{ border: "1px solid white" }}
-                    className="my-10"
+                    className="my-10 rounded-lg"
                     id="canvas"
-                    width={template ? template.width : "720"}
-                    height={template ? template.height : "480"}
+                    width={template ? template.width : "1280"}
+                    height={template ? template.height : "720"}
                     onClick={(e) => handleClick(e)}
                 ></canvas>
             </div>

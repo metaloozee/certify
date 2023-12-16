@@ -24,7 +24,7 @@ export const TemplateConfigForm = ({
 
     return (
         <div className="w-full">
-            <div className="w-full flex items-center justify-center">
+            <div className="w-full flex items-center justify-start">
                 <CanvasImage
                     template={template}
                     setTemplate={setTemplate}
