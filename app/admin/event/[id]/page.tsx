@@ -58,6 +58,11 @@ export default async function AdminEventPage({ params }: { params: any }) {
                                     {eventData.date}
                                 </Badge>
                                 <Badge variant={"outline"}>
+                                    {eventData.branchwise
+                                        ? "Branchwise"
+                                        : "Not Branchwise"}
+                                </Badge>
+                                <Badge variant={"outline"}>
                                     Maximum Team Members: {eventData.team_limit}
                                 </Badge>
                             </div>

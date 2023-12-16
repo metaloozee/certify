@@ -84,7 +84,7 @@ export const EditEventDialog = ({ event }: { event: EventData }) => {
             </DialogTrigger>
             <DialogContent>
                 <DialogHeader></DialogHeader>
-                <div className="space-y-3">
+                <div className="space-y-7">
                     <h1 className="text-2xl font-bold text-center">
                         Edit Event
                     </h1>
@@ -150,7 +150,7 @@ export const EditEventDialog = ({ event }: { event: EventData }) => {
 
                     <Button
                         disabled={loading}
-                        className="w-full "
+                        className="w-full"
                         onClick={handleSubmit}
                     >
                         Confirm Changes
