@@ -1,8 +1,6 @@
 "use client"
 
-import React, { useEffect, useState } from "react"
-import { useRouter } from "next/navigation"
-import { ReloadIcon } from "@radix-ui/react-icons"
+import * as React from "react"
 import {
     ColumnDef,
     ColumnFiltersState,
@@ -10,13 +8,15 @@ import {
     getCoreRowModel,
     getFilteredRowModel,
     getPaginationRowModel,
+    getSortedRowModel,
+    SortingState,
     useReactTable,
     VisibilityState,
 } from "@tanstack/react-table"
-import { MoreHorizontal, Save, TrashIcon } from "lucide-react"
-import { string } from "zod"
+import { ArrowUpDown, ChevronDown, MoreHorizontal } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
+import { Checkbox } from "@/components/ui/checkbox"
 import {
     DropdownMenu,
     DropdownMenuCheckboxItem,
@@ -28,15 +28,6 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { Input } from "@/components/ui/input"
 import {
-    Select,
-    SelectContent,
-    SelectGroup,
-    SelectItem,
-    SelectLabel,
-    SelectTrigger,
-    SelectValue,
-} from "@/components/ui/select"
-import {
     Table,
     TableBody,
     TableCell,
@@ -44,8 +35,9 @@ import {
     TableHeader,
     TableRow,
 } from "@/components/ui/table"
-import { toast, useToast } from "@/components/ui/use-toast"
-import { useSupabase } from "@/app/supabase-provider"
+
+import { DataTableDelete } from "./datatable-delete"
+import { DataTableResult } from "./datatable-result"
 
 export type EventParticipantData = {
     id: string
@@ -67,10 +59,12 @@ export type EventParticipantData = {
 
 export const columns: ColumnDef<EventParticipantData>[] = [
     {
+        id: "group_name",
         accessorKey: "group.name",
         header: "Group Name",
     },
     {
+        id: "group_member_name",
         accessorKey: "group.groupmember",
         header: "Group Members",
         cell: ({ row }) => {
@@ -87,6 +81,7 @@ export const columns: ColumnDef<EventParticipantData>[] = [
         },
     },
     {
+        id: "enrollment",
         accessorKey: "group.groupmember",
         header: "Enrollment No",
         cell: ({ row }) => {
@@ -104,335 +99,20 @@ export const columns: ColumnDef<EventParticipantData>[] = [
         id: "result",
         header: "Result",
         cell: ({ row }) => {
-            const { toast } = useToast()
-            const { supabase } = useSupabase()
-
-            const [defaultPosition, setDefaultPosition] =
-                useState<string>("Participant")
-            useEffect(() => {
-                const fetchPosition = async () => {
-                    try {
-                        const { data, error } = await supabase
-                            .from("eventresult")
-                            .select("*")
-                            .eq("event_id", row.original.event_id ?? "")
-                            .eq(
-                                "branch",
-                                row.original.group?.groupmember[0].student?.class?.slice(
-                                    -2
-                                ) ?? ""
-                            )
-                            .maybeSingle()
-
-                        if (error) {
-                            throw new Error(error.message)
-                        }
-
-                        if (data?.winner == row.original.group?.id) {
-                            return setDefaultPosition("Winner")
-                        } else if (data?.runner_up == row.original.group?.id) {
-                            return setDefaultPosition("Runner Up")
-                        } else if (
-                            data?.second_runner_up == row.original.group?.id
-                        ) {
-                            return setDefaultPosition("Second Runner Up")
-                        } else {
-                            return setDefaultPosition("Participant")
-                        }
-                    } catch (error) {
-                        console.error("Error fetching position:", error)
-                        setDefaultPosition("participant")
-                    }
-                }
-
-                fetchPosition()
-            }, [])
-
-            const [position, setPosition] = useState<string>("participant")
-            const [loading, setLoading] = useState(false)
-
-            const handleSubmit = async (e: React.FormEvent) => {
-                e.preventDefault()
-                const id = row.original.event_id
-                const branchCode =
-                    row.original.group?.groupmember[0]?.student?.class?.slice(
-                        -2
-                    )
-                var element
-                try {
-                    setLoading(true)
-                    const { data: eData } = await supabase
-                        .from("eventresult")
-                        .select("id, winner, runner_up, second_runner_up")
-                        .eq("branch", branchCode ?? "")
-                        .eq("event_id", id ?? "")
-
-                    if (
-                        eData !== null &&
-                        eData !== undefined &&
-                        eData.length > 0
-                    ) {
-                        for (let i = 0; i < eData.length; i++) {
-                            element = eData[i]
-                        }
-                    }
-                    if (position === "winner") {
-                        if (
-                            element?.winner == null ||
-                            element.winner == undefined
-                        ) {
-                            if (
-                                element?.second_runner_up ==
-                                    row.original.group?.id ||
-                                element?.runner_up == row.original.group?.id ||
-                                element?.winner == row.original.group?.id
-                            ) {
-                                return toast({
-                                    title: "uh oh!",
-                                    description: `Cant select Multiple 'winners' from same branch`,
-                                })
-                            } else {
-                                const { error } = await supabase
-                                    .from("eventresult")
-                                    .upsert({
-                                        id: element?.id,
-                                        event_id: id,
-                                        winner: row.original.group?.id,
-                                        branch: branchCode ?? "",
-                                    })
-                                if (error) {
-                                    throw new Error(error.message)
-                                }
-                            }
-                        } else {
-                            return toast({
-                                title: "uh oh!",
-                                description: `Cant select Multiple 'winners' from same branch`,
-                            })
-                        }
-                    } else if (position === "runnerup") {
-                        if (
-                            element?.runner_up == null ||
-                            element.runner_up == undefined
-                        ) {
-                            if (
-                                element?.second_runner_up ==
-                                    row.original.group?.id ||
-                                element?.winner == row.original.group?.id ||
-                                element?.runner_up == row.original.group?.id
-                            ) {
-                                return toast({
-                                    title: "uh oh!",
-                                    description: `Cant select Multiple 'Runner ups' from same branch`,
-                                })
-                            } else {
-                                const { error } = await supabase
-                                    .from("eventresult")
-                                    .upsert({
-                                        id: element?.id,
-                                        event_id: id,
-                                        runner_up: row.original.group?.id,
-                                        branch: branchCode ?? "",
-                                    })
-                                    .eq("event_id", id ?? "")
-                                if (error) {
-                                    throw new Error(error.message)
-                                }
-                            }
-                        } else {
-                            return toast({
-                                title: "uh oh!",
-                                description: `Cant select Multiple 'Runner ups' from same branch`,
-                            })
-                        }
-                    } else if (position === "secondrunnerup") {
-                        for (let i = 0; i < eData!.length; i++) {
-                            element = eData![i]
-                        }
-                        if (
-                            element?.second_runner_up == null ||
-                            element.second_runner_up == undefined
-                        ) {
-                            if (
-                                element?.runner_up == row.original.group?.id ||
-                                element?.winner == row.original.group?.id ||
-                                element?.second_runner_up ==
-                                    row.original.group?.id
-                            ) {
-                                return toast({
-                                    title: "uh oh!",
-                                    description: `Cant select Multiple 'Second Runner ups' from same branch`,
-                                })
-                            } else {
-                                const { error } = await supabase
-                                    .from("eventresult")
-                                    .upsert({
-                                        id: element?.id,
-                                        event_id: id,
-                                        second_runner_up:
-                                            row.original.group?.id,
-                                        branch: branchCode ?? "",
-                                    })
-
-                                if (error) {
-                                    throw new Error(error.message)
-                                }
-                            }
-                        } else {
-                            return toast({
-                                title: "uh oh!",
-                                description: `Cant select Multiple ' Second Runner ups' from same branch`,
-                            })
-                        }
-                    } else if (position === "participant") {
-                        for (let i = 0; i < eData!.length; i++) {
-                            element = eData![i]
-                        }
-                        if (element?.winner === row.original.group?.id) {
-                            const { error } = await supabase
-                                .from("eventresult")
-                                .upsert({
-                                    id: element?.id,
-                                    event_id: id,
-                                    winner: null,
-                                    branch: branchCode ?? "",
-                                })
-
-                            if (error) {
-                                throw new Error(error.message)
-                            }
-                        } else if (
-                            element?.runner_up === row.original.group?.id
-                        ) {
-                            const { error } = await supabase
-                                .from("eventresult")
-                                .upsert({
-                                    id: element?.id,
-                                    event_id: id,
-                                    runner_up: null,
-                                    branch: branchCode ?? "",
-                                })
-
-                            if (error) {
-                                throw new Error(error.message)
-                            }
-                        } else if (
-                            element?.second_runner_up === row.original.group?.id
-                        ) {
-                            const { error } = await supabase
-                                .from("eventresult")
-                                .upsert({
-                                    id: element?.id,
-                                    event_id: id,
-                                    second_runner_up: null,
-                                    branch: branchCode ?? "",
-                                })
-
-                            if (error) {
-                                throw new Error(error.message)
-                            }
-                        }
-                    }
-
-                    return toast({
-                        title: "Data Updated!",
-                        description: `Successfully updated the group's position as ${position}`,
-                    })
-                } catch (e: any) {
-                    console.error(e)
-                    toast({
-                        title: "Uh Oh!",
-                        description: `An unknown error occurred!`,
-                    })
-                } finally {
-                    setLoading(false)
-                }
-            }
-
-            return (
-                <form className="flex flex-row gap-2" onSubmit={handleSubmit}>
-                    <Select onValueChange={(e) => setPosition(e as string)}>
-                        <SelectTrigger>
-                            <SelectValue placeholder={defaultPosition} />
-                        </SelectTrigger>
-                        <SelectContent>
-                            <SelectGroup>
-                                <SelectLabel>Position</SelectLabel>
-                                <SelectItem value="winner">Winner</SelectItem>
-                                <SelectItem value="runnerup">
-                                    Runner Up
-                                </SelectItem>
-                                <SelectItem value="secondrunnerup">
-                                    Second Runner Up
-                                </SelectItem>
-                                <SelectItem value="participant">
-                                    Participant
-                                </SelectItem>
-                            </SelectGroup>
-                        </SelectContent>
-                    </Select>
-
-                    {loading ? (
-                        <Button disabled type="submit" variant={"ghost"}>
-                            <ReloadIcon className="mr-2 h-4 w-4 animate-spin" />
-                        </Button>
-                    ) : (
-                        <Button type="submit" variant={"ghost"}>
-                            <Save className="text-green-500 h-4 w-4" />
-                        </Button>
-                    )}
-                </form>
-            )
+            return <DataTableResult row={row} />
         },
     },
+
     {
         id: "action",
         header: "Action",
         cell: ({ row }) => {
-            const router = useRouter()
-            const { supabase } = useSupabase()
-
-            return (
-                <Button
-                    onClick={async () => {
-                        try {
-                            const { error } = await supabase
-                                .from("group")
-                                .delete()
-                                .eq("id", row.original.group?.id ?? "")
-
-                            if (error) {
-                                throw new Error(error.message)
-                            }
-
-                            await router.refresh()
-
-                            return toast({
-                                title: "Data Deleted!",
-                                description: `Successfully deleted the group.`,
-                            })
-                        } catch (e: any) {
-                            console.error(e)
-                            toast({
-                                title: "Uh Oh!",
-                                description: `You cannot delete a group which has already been alloted a position, change back its position to participant to do so.`,
-                            })
-                        }
-                        await supabase
-                            .from("group")
-                            .delete()
-                            .eq("id", row.original.group?.id ?? "")
-                        await router.refresh()
-                    }}
-                    size={"sm"}
-                    variant={"ghost"}
-                >
-                    <TrashIcon className="text-red-500 h-4 w-4" />
-                </Button>
-            )
+            return <DataTableDelete row={row} />
         },
     },
+
     {
+        id: "branch",
         accessorKey: "branch",
         header: "Branch",
         cell: ({ row }) => {
@@ -449,11 +129,8 @@ export const columns: ColumnDef<EventParticipantData>[] = [
     },
 ]
 
-interface DataTableProps {
-    data: EventParticipantData[]
-}
-
-export const MemberDataTable = ({ data }: DataTableProps) => {
+export const MemberDataTable = ({ data }: { data: EventParticipantData[] }) => {
+    const [sorting, setSorting] = React.useState<SortingState>([])
     const [columnFilters, setColumnFilters] =
         React.useState<ColumnFiltersState>([])
     const [columnVisibility, setColumnVisibility] =
@@ -462,22 +139,25 @@ export const MemberDataTable = ({ data }: DataTableProps) => {
     const table = useReactTable({
         data,
         columns,
+        onSortingChange: setSorting,
+        onColumnFiltersChange: setColumnFilters,
         getCoreRowModel: getCoreRowModel(),
         getPaginationRowModel: getPaginationRowModel(),
-        onColumnFiltersChange: setColumnFilters,
+        getSortedRowModel: getSortedRowModel(),
         getFilteredRowModel: getFilteredRowModel(),
         onColumnVisibilityChange: setColumnVisibility,
         state: {
+            sorting,
             columnFilters,
             columnVisibility,
         },
     })
 
     return (
-        <div>
+        <div className="w-full">
             <div className="flex items-center py-4">
                 <Input
-                    placeholder="Filter Members..."
+                    placeholder="Filter Groups"
                     value={
                         (table
                             .getColumn("group_name")
@@ -493,7 +173,7 @@ export const MemberDataTable = ({ data }: DataTableProps) => {
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                         <Button variant="outline" className="ml-auto">
-                            Columns
+                            Columns <ChevronDown className="ml-2 h-4 w-4" />
                         </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
@@ -571,22 +251,24 @@ export const MemberDataTable = ({ data }: DataTableProps) => {
                 </Table>
             </div>
             <div className="flex items-center justify-end space-x-2 py-4">
-                <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => table.previousPage()}
-                    disabled={!table.getCanPreviousPage()}
-                >
-                    Previous
-                </Button>
-                <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => table.nextPage()}
-                    disabled={!table.getCanNextPage()}
-                >
-                    Next
-                </Button>
+                <div className="space-x-2">
+                    <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => table.previousPage()}
+                        disabled={!table.getCanPreviousPage()}
+                    >
+                        Previous
+                    </Button>
+                    <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => table.nextPage()}
+                        disabled={!table.getCanNextPage()}
+                    >
+                        Next
+                    </Button>
+                </div>
             </div>
         </div>
     )
