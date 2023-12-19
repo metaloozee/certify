@@ -7,7 +7,6 @@ import { FileDownIcon, Loader2 } from "lucide-react"
 
 import { useSupabase } from "@/app/supabase-provider"
 
-import { EventData } from "./event-card"
 import { EventParticipantData } from "./member-data-table"
 import { Button } from "./ui/button"
 import { toast } from "./ui/use-toast"
@@ -23,6 +22,17 @@ export const GenerateExcelButton = ({
 
     const handleClick = async () => {
         setLoading(true)
+        if (!data) {
+            setLoading(false)
+
+            return toast({
+                title: "Uh oh!",
+                description:
+                    "Since no one is participating, the Excel file cannot be generated!",
+                variant: "destructive",
+            })
+        }
+
         const { data: event } = await supabase
             .from("event")
             .select("*")
@@ -38,7 +48,8 @@ export const GenerateExcelButton = ({
         if (res.status !== 200) {
             setLoading(false)
             return toast({
-                title: "An error occured while generating excel sheets!",
+                title: "uh oh!",
+                description: "An error occured while generating excel sheets!",
                 variant: "destructive",
             })
         }
@@ -57,15 +68,14 @@ export const GenerateExcelButton = ({
             onClick={handleClick}
         >
             {loading ? (
-                <div className="flex">
-                    <p className="animate-pulse">Generating</p>
-                    <Loader2 className="animate-spin w-5 h-5 ml-2" />
-                </div>
+                <>
+                    Generating <Loader2 className="animate-spin w-3 h-3 ml-2" />
+                </>
             ) : (
-                <div className="flex">
-                    <p>Generate Excel File</p>{" "}
-                    <FileDownIcon className="w-5 h-5 ml-2" />
-                </div>
+                <>
+                    Generate Excel File{" "}
+                    <FileDownIcon className="w-3 h-3 ml-2" />
+                </>
             )}
         </Button>
     )
