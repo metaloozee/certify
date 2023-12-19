@@ -2,6 +2,7 @@ import Link from "next/link"
 import { MoveLeft } from "lucide-react"
 
 import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
 import { DeleteButton } from "@/components/delete-button"
 import { EditEventDialog } from "@/components/edit-event-dialog"
 import { EndEventForm } from "@/components/end-event-form"
@@ -52,12 +53,16 @@ export default async function AdminEventPage({ params }: { params: any }) {
             <div className="flex flex-col items-left justify-center">
                 <div className="flex flex-row flex-wrap justify-between items-start">
                     <div className="flex flex-col gap-5">
-                        <Link
-                            href={"/admin"}
-                            className="flex items-center gap-3 text-xs text-muted-foreground"
+                        <Button
+                            variant={"link"}
+                            size={null}
+                            className="text-muted-foreground max-w-fit"
+                            asChild
                         >
-                            <MoveLeft className="h-3 w-3" /> back
-                        </Link>
+                            <Link href={"/admin"}>
+                                <MoveLeft className="h-3 w-3 mr-3" /> back
+                            </Link>
+                        </Button>
                         <div className="flex flex-row flex-wrap gap-5 lg:gap-10">
                             <h1 className="text-3xl font-bold">
                                 {eventData.name}
