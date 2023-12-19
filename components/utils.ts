@@ -2,18 +2,39 @@ import { SupabaseClient } from "@supabase/supabase-js"
 
 import type { EventData } from "@/components/event-card"
 
-export const downloadCertificates = async (
+export const downloadFile = async (
     supabaseContext: SupabaseClient,
     event: EventData,
-    test: boolean = false
+    test: boolean = false,
+    excelsheet: boolean = false
 ) => {
-    console.log("Downloading Certificates!")
-    const { data, error } = await supabaseContext.storage
-        .from("certificates")
-        .download(`${event.id}.${test ? "png" : "zip"}`)
+    let data: Blob | null = null
+    if (!excelsheet) {
+        const { data: cert, error } = await supabaseContext.storage
+            .from("certificates")
+            .download(`${event.id}.${test ? "png" : "zip"}`)
+        if (error) {
+            console.log(error.message)
+            return false
+        }
+        data = cert
+    } else {
+        const { data: sheet, error } = await supabaseContext.storage
+            .from("sheets")
+            .download(`${event.id}.xls`)
+        if (error) {
+            console.log(error.message)
+            return false
+        }
+        data = sheet
+        await supabaseContext.storage.from("sheets").remove([`${event.id}.xls`])
+    }
 
     if (data) {
-        const blob = test ? data : data.slice(0, data.size, "application/zip")
+        const blob =
+            test || excelsheet
+                ? data
+                : data.slice(0, data.size, "application/zip")
         const blobUrl = URL.createObjectURL(blob)
         const link = document.createElement("a")
         link.href = blobUrl
@@ -31,9 +52,5 @@ export const downloadCertificates = async (
         document.body.removeChild(link)
     }
 
-    if (error) {
-        console.log(error.message)
-        return false
-    }
     return true
 }

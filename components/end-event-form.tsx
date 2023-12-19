@@ -20,7 +20,7 @@ import {
 import { toast } from "@/components/ui/use-toast"
 import type { EventData } from "@/components/event-card"
 import { TemplateConfigForm } from "@/components/template-config"
-import { downloadCertificates } from "@/components/utils"
+import { downloadFile } from "@/components/utils"
 import { useSupabase } from "@/app/supabase-provider"
 
 interface RequestFormat {
@@ -95,7 +95,7 @@ export const EndEventForm = ({ event }: { event: EventData }) => {
     }
 
     const handleGenerate = async () => {
-        await downloadCertificates(supabase, event)
+        await downloadFile(supabase, event)
         router.push("/")
     }
 
@@ -135,7 +135,7 @@ export const EndEventForm = ({ event }: { event: EventData }) => {
         setLoading(true)
         const requestSuccess = await sendGenerationRequest(true)
         if (requestSuccess) {
-            await downloadCertificates(supabase, event, true)
+            await downloadFile(supabase, event, true)
             supabase.storage.from("certificates").remove([`${event.id}.png`])
         } else {
             toast({

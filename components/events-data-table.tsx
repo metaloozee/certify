@@ -40,7 +40,7 @@ import {
     TableRow,
 } from "@/components/ui/table"
 import { useToast } from "@/components/ui/use-toast"
-import { downloadCertificates } from "@/components/utils"
+import { downloadFile } from "@/components/utils"
 import { useSupabase } from "@/app/supabase-provider"
 
 export type EventTableData = {
@@ -116,7 +116,7 @@ export const columns: ColumnDef<EventTableData>[] = [
             const { supabase } = useSupabase()
 
             const handleCerts = async () => {
-                const certs = await downloadCertificates(supabase, row.original)
+                const certs = await downloadFile(supabase, row.original)
 
                 if (!certs) {
                     return toast({
