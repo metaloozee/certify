@@ -116,7 +116,7 @@ export const columns: ColumnDef<EventTableData>[] = [
             const { supabase } = useSupabase()
 
             const handleCerts = async () => {
-                const certs = await downloadCertificates(supabase, row.original)
+                const certs = await downloadFile(supabase, row.original)
 
                 if (!certs) {
                     return toast({
