@@ -40,7 +40,7 @@ import {
     TableRow,
 } from "@/components/ui/table"
 import { useToast } from "@/components/ui/use-toast"
-import { downloadCertificates } from "@/components/utils"
+import { downloadFile } from "@/components/utils"
 import { useSupabase } from "@/app/supabase-provider"
 
 export type EventTableData = {
