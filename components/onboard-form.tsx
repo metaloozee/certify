@@ -50,12 +50,15 @@ export const OnboardingForm = ({ session }: { session: Session | null }) => {
                 lname.length > 0 &&
                 lname.trim() !== "" &&
                 enroll &&
+                enroll.length > 0 &&
+                enroll.trim() !== "" &&
                 enroll.length === 10 &&
                 !isNaN(Number(enroll)) &&
                 contactNumber &&
                 contactNumber.length === 10 &&
                 !isNaN(Number(contactNumber))
             ) {
+                // Checking if existing user with the same enrollment number exists or not
                 const { data: existingUser, error: existingUserError } =
                     await supabase
                         .from("student")
@@ -70,7 +73,7 @@ export const OnboardingForm = ({ session }: { session: Session | null }) => {
                         "User already exists with the same Enrollment number"
                     )
                 }
-
+                // Adding the user
                 const { error } = await supabase
                     .from("student")
                     .update({
