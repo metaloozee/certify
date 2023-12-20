@@ -236,6 +236,7 @@ export interface Database {
                     id: string
                     is_edited: boolean | null
                     last_name: string | null
+                    contact_number: string | null
                 }
                 Insert: {
                     class?: string | null
@@ -244,6 +245,7 @@ export interface Database {
                     id: string
                     is_edited?: boolean | null
                     last_name?: string | null
+                    contact_number: string | null
                 }
                 Update: {
                     class?: string | null
@@ -252,6 +254,7 @@ export interface Database {
                     id?: string
                     is_edited?: boolean | null
                     last_name?: string | null
+                    contact_number: string | null
                 }
                 Relationships: [
                     {
