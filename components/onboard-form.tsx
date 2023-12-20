@@ -33,6 +33,7 @@ export const OnboardingForm = ({ session }: { session: Session | null }) => {
     const [branch, setBranch] = useState<string>("IF")
     const [year, setYear] = useState("TY")
     const [enroll, setEnroll] = useState<string | null>(null)
+    const [contactNumber, setContactNumber] = useState<string | null>(null)
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
@@ -49,10 +50,12 @@ export const OnboardingForm = ({ session }: { session: Session | null }) => {
                 lname.length > 0 &&
                 lname.trim() !== "" &&
                 enroll &&
-                enroll.length > 0 &&
-                enroll.trim() !== ""
+                enroll.length === 10 &&
+                !isNaN(Number(enroll)) &&
+                contactNumber &&
+                contactNumber.length === 10 &&
+                !isNaN(Number(contactNumber))
             ) {
-                // Checking if existing user with the same enrollment number exists or not
                 const { data: existingUser, error: existingUserError } =
                     await supabase
                         .from("student")
@@ -68,13 +71,13 @@ export const OnboardingForm = ({ session }: { session: Session | null }) => {
                     )
                 }
 
-                // Adding the user
                 const { error } = await supabase
                     .from("student")
                     .update({
                         first_name: fname,
                         last_name: lname,
                         enrollment: enroll,
+                        contact_number: contactNumber,
                         class: year.concat(branch),
                     })
                     .eq("id", session?.user.id ?? "")
@@ -133,6 +136,17 @@ export const OnboardingForm = ({ session }: { session: Session | null }) => {
                         id="enroll"
                         onChange={(e) => setEnroll(e.target.value)}
                         value={enroll ?? ""}
+                    />
+                </div>
+
+                <div className="space-y-2">
+                    <Label htmlFor="contactNumber">Contact Number</Label>
+                    <Input
+                        disabled={loading}
+                        type="tel"
+                        id="contactNumber"
+                        onChange={(e) => setContactNumber(e.target.value)}
+                        value={contactNumber ?? ""}
                     />
                 </div>
 

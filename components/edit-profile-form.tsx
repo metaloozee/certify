@@ -27,6 +27,7 @@ export type ExistingUser = {
     first_name: string | null
     id: string
     last_name: string | null
+    contact_number: string | null
 }
 
 export const EditProfileForm = ({
@@ -45,8 +46,10 @@ export const EditProfileForm = ({
         ? useState<string>(br)
         : useState<string>("IF")
     const [year, setYear] = yr ? useState<string>(yr) : useState<string>("TY")
-
     const [enroll, setEnroll] = useState<string | null>(data.enrollment)
+    const [contactNumber, setContactNumber] = useState<string | null>(
+        data.contact_number
+    )
 
     const router = useRouter()
     const { supabase } = useSupabase()
@@ -86,6 +89,7 @@ export const EditProfileForm = ({
                             first_name: fname,
                             last_name: lname,
                             enrollment: enroll,
+                            contact_number: contactNumber,
                             class: year.concat(branch),
                             is_edited:
                                 data?.class?.slice(2) !== branch ||
@@ -154,6 +158,17 @@ export const EditProfileForm = ({
                         id="enroll"
                         onChange={(e) => setEnroll(e.target.value)}
                         value={enroll ?? ""}
+                    />
+                </div>
+
+                <div className="space-y-2">
+                    <Label htmlFor="contactNumber">Contact Number</Label>
+                    <Input
+                        disabled={loading}
+                        type="tel"
+                        id="contactNumber"
+                        onChange={(e) => setContactNumber(e.target.value)}
+                        value={contactNumber ?? ""}
                     />
                 </div>
 

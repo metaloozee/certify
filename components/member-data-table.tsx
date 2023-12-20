@@ -52,6 +52,7 @@ export type EventParticipantData = {
                 first_name: string | null
                 id: string
                 last_name: string | null
+                contact_number: string | null
             } | null
         }[]
     } | null
@@ -96,6 +97,35 @@ export const columns: ColumnDef<EventParticipantData>[] = [
         },
     },
     {
+        id: "branch",
+        accessorKey: "branch",
+        header: "Branch",
+        cell: ({ row }) => {
+            return (
+                <div className="space-y-2">
+                    {row.original.group?.groupmember.map((member, index) => (
+                        <div key={index}>{member.student?.class}</div>
+                    ))}
+                </div>
+            )
+        },
+    },
+    {
+        id: "contactNumber",
+        accessorKey: "group.groupmember",
+        header: "Contact Number",
+        cell: ({ row }) => {
+            const members = row.original.group?.groupmember || []
+            return (
+                <div className="space-y-2">
+                    {members.map((member, index) => (
+                        <div key={index}>{member.student?.contact_number}</div>
+                    ))}
+                </div>
+            )
+        },
+    },
+    {
         id: "result",
         header: "Result",
         cell: ({ row }) => {
@@ -108,21 +138,6 @@ export const columns: ColumnDef<EventParticipantData>[] = [
         header: "Action",
         cell: ({ row }) => {
             return <DataTableDelete row={row} />
-        },
-    },
-
-    {
-        id: "branch",
-        accessorKey: "branch",
-        header: "Branch",
-        cell: ({ row }) => {
-            return (
-                <div className="space-y-2">
-                    {row.original.group?.groupmember.map((member, index) => (
-                        <div key={index}>{member.student?.class}</div>
-                    ))}
-                </div>
-            )
         },
     },
 ]
