@@ -74,7 +74,9 @@ export const EditProfileForm = ({
                 lname.trim() !== "" &&
                 enroll &&
                 enroll.length > 0 &&
-                enroll.trim() !== ""
+                enroll.trim() !== "" &&
+                contactNumber &&
+                contactNumber.length === 10
             ) {
                 const { data } = await supabase
                     .from("student")
@@ -165,7 +167,7 @@ export const EditProfileForm = ({
                     <Label htmlFor="contactNumber">Contact Number</Label>
                     <Input
                         disabled={loading}
-                        type="tel"
+                        type="number"
                         id="contactNumber"
                         onChange={(e) => setContactNumber(e.target.value)}
                         value={contactNumber ?? ""}
