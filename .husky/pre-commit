@@ -3,3 +3,4 @@
 
 pnpm exec lint-staged
 pnpm exec lint-staged
+npx lint-staged
